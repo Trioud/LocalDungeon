@@ -1,6 +1,17 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
+import type { AwilixContainer } from 'awilix';
 import type { Env } from './env.js';
+import { buildContainer } from './container.js';
+import authenticatePlugin from './plugins/authenticate.js';
+import { authRoutes } from './handlers/authHandler.js';
+
+declare module 'fastify' {
+  interface FastifyRequest {
+    diScope: AwilixContainer;
+  }
+}
 
 export async function buildApp(env: Env) {
   const app = Fastify({
@@ -9,10 +20,29 @@ export async function buildApp(env: Env) {
     },
   });
 
+  const container = buildContainer(env);
+
   await app.register(cors, {
     origin: env.CORS_ORIGIN,
     credentials: true,
   });
+
+  await app.register(rateLimit, {
+    max: 100,
+    timeWindow: '1 minute',
+  });
+
+  await app.register(authenticatePlugin, { jwtSecret: env.JWT_ACCESS_SECRET });
+
+  app.addHook('onRequest', async (request) => {
+    request.diScope = container.createScope();
+  });
+
+  app.addHook('onResponse', async (request) => {
+    await request.diScope.dispose();
+  });
+
+  await app.register(authRoutes);
 
   app.get('/health', async () => {
     return { status: 'ok' };
@@ -20,7 +50,7 @@ export async function buildApp(env: Env) {
 
   app.setErrorHandler((error, _request, reply) => {
     app.log.error(error);
-    const statusCode = error.statusCode ?? 500;
+    const statusCode = (error as any).statusCode ?? 500;
     reply.status(statusCode).send({
       error: statusCode >= 500 ? 'Internal Server Error' : error.message,
     });

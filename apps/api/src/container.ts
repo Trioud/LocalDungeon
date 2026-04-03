@@ -1,22 +1,28 @@
-import { createContainer, asValue, InjectionMode } from 'awilix';
+import { createContainer, asValue, asClass, InjectionMode } from 'awilix';
+import { PrismaClient } from '@prisma/client';
+import Redis from 'ioredis';
+import { PrismaUserRepository } from './repositories/PrismaUserRepository.js';
+import { RedisSessionStateStore } from './repositories/RedisSessionStateStore.js';
+import { AuthService } from './services/AuthService.js';
+import type { Env } from './env.js';
 
-/**
- * Builds the Awilix DI container.
- * Phase 0: skeleton only — more registrations added in Phase 1 (auth).
- *
- * Lifetime guide:
- *   singleton()  — stateless (DiceService, config)
- *   scoped()     — per-request (all Handlers/Services/Repositories)
- *   transient()  — rare (new instance every time)
- */
-export function buildContainer() {
+export function buildContainer(env: Env) {
   const container = createContainer({
     injectionMode: InjectionMode.PROXY,
   });
 
-  // Registrations will be added here as features are built:
-  //   container.register({ userRepository: asClass(UserRepository).scoped() });
-  //   container.register({ authService: asClass(AuthService).scoped() });
+  const prisma = new PrismaClient({ datasources: { db: { url: env.DATABASE_URL } } });
+  const redis = new Redis(env.REDIS_URL, { lazyConnect: true });
+  redis.on('error', () => {});
+
+  container.register({
+    env: asValue(env),
+    prisma: asValue(prisma),
+    redis: asValue(redis),
+    userRepository: asClass(PrismaUserRepository).scoped(),
+    sessionStateStore: asClass(RedisSessionStateStore).scoped(),
+    authService: asClass(AuthService).scoped(),
+  });
 
   return container;
 }
