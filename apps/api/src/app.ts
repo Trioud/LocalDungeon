@@ -7,6 +7,7 @@ import { buildContainer } from './container.js';
 import authenticatePlugin from './plugins/authenticate.js';
 import { authRoutes } from './handlers/authHandler.js';
 import { gameDataRoutes } from './handlers/gameDataHandler.js';
+import { characterRoutes } from './handlers/characterHandler.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -45,6 +46,7 @@ export async function buildApp(env: Env) {
 
   await app.register(authRoutes);
   await app.register(gameDataRoutes);
+  await app.register(characterRoutes);
 
   app.get('/health', async () => {
     return { status: 'ok' };

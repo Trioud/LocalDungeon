@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id           String      @id @default(cuid())
+  username     String      @unique
+  email        String      @unique
+  passwordHash String      @map("password_hash")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  characters   Character[]
 
   @@map("users")
 }
@@ -165,4 +166,47 @@ model Language {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("languages")
+}
+
+model Character {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name         String
+  alignment    String   @default("True Neutral")
+  backstory    String   @default("")
+
+  appearance   Json     @default("{}")
+  personality  Json     @default("{}")
+
+  className    String   @map("class_name")
+  subclassName String?  @map("subclass_name")
+  level        Int      @default(1)
+  hitDie       Int      @map("hit_die")
+  currentHP    Int      @map("current_hp")
+  maxHP        Int      @map("max_hp")
+  tempHP       Int      @default(0) @map("temp_hp")
+
+  speciesName    String  @map("species_name")
+  backgroundName String  @map("background_name")
+
+  abilityScores  Json   @map("ability_scores")
+  derivedStats   Json   @map("derived_stats")
+
+  proficiencies  Json   @default("{}")
+  spells         Json   @default("{}")
+  features       Json   @default("[]")
+  feats          Json   @default("[]")
+  inventory      Json   @default("{}")
+
+  conditions     Json   @default("[]")
+  exhaustionLevel Int   @default(0) @map("exhaustion_level")
+  isBloodied     Boolean @default(false) @map("is_bloodied")
+
+  portraitUrl    String? @map("portrait_url")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("characters")
 }

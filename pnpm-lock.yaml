@@ -32,6 +32,9 @@ importers:
       '@fastify/rate-limit':
         specifier: ^10.3.0
         version: 10.3.0
+      '@local-dungeon/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       awilix:
         specifier: ^10.0.0
         version: 10.0.2

@@ -17,5 +17,10 @@ export default defineConfig({
       exclude: ['src/test/**', 'src/index.ts', 'prisma/**', 'dist/**'],
     },
   },
+  resolve: {
+    alias: {
+      '@local-dungeon/shared': '/Users/guillaumecristiani/Work/Personal/D-D_Expanded/packages/shared/src/index.ts',
+    },
+  },
 });
 

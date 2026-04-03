@@ -22,6 +22,7 @@
   "dependencies": {
     "@fastify/cors": "^11.2.0",
     "@fastify/rate-limit": "^10.3.0",
+    "@local-dungeon/shared": "workspace:*",
     "awilix": "^10.0.0",
     "bcrypt": "^5.1.1",
     "fastify": "^5.0.0",
