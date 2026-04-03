@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import type { Character } from '@/lib/api/characters.js';
+import type { SessionInfo, SessionSummary } from '@/lib/api/sessions.js';
 
 export const MOCK_CHARACTER: Character = {
   id: 'char_123',
@@ -64,6 +65,32 @@ export const MOCK_CHARACTER: Character = {
   updatedAt: '2024-01-01T00:00:00Z',
 };
 
+export const MOCK_SESSION: SessionInfo = {
+  id: 'sess_123',
+  name: 'The Lost Mine',
+  inviteCode: 'ABC123',
+  createdById: 'user_1',
+  maxPlayers: 6,
+  status: 'lobby',
+  phase: 'exploration',
+  players: [
+    {
+      id: 'sp_1',
+      userId: 'user_1',
+      username: 'aldric',
+      characterId: 'char_123',
+      characterName: 'Aldric Ironforge',
+      characterClass: 'Fighter',
+      characterLevel: 3,
+      portraitUrl: null,
+      isReady: false,
+      isConnected: true,
+    }
+  ],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
+
 export const handlers = [
   http.post('/api/auth/login', async ({ request }) => {
     const body = await request.json() as { email: string; password: string };
@@ -101,4 +128,14 @@ export const handlers = [
     }
     return HttpResponse.json({ message: 'Not found' }, { status: 404 });
   }),
+  http.get('*/sessions', () => HttpResponse.json([
+    { id: 'sess_123', name: 'The Lost Mine', status: 'lobby', playerCount: 1, maxPlayers: 6, createdAt: new Date().toISOString() } as SessionSummary
+  ])),
+  http.post('*/sessions', async ({ request }) => {
+    const body = await request.json() as { name: string; maxPlayers: number };
+    return HttpResponse.json({ ...MOCK_SESSION, name: body.name }, { status: 201 });
+  }),
+  http.get('*/sessions/:id', () => HttpResponse.json(MOCK_SESSION)),
+  http.post('*/sessions/:id/join', () => HttpResponse.json(MOCK_SESSION)),
+  http.delete('*/sessions/:id/leave', () => new HttpResponse(null, { status: 204 })),
 ];
