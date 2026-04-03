@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import InlineEdit from '@/components/ui/InlineEdit.js';
-import { useCharacter, usePatchCharacter } from '@/lib/hooks/useCharacter.js';
-import type { Character } from '@/lib/api/characters.js';
+import InlineEdit from '@/components/ui/InlineEdit';
+import { useCharacter, usePatchCharacter } from '@/lib/hooks/useCharacter';
+import type { Character } from '@/lib/api/characters';
 
 const SPELLCASTER_CLASSES = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'];
 

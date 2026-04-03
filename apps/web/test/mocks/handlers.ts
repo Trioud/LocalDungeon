@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
-import type { Character } from '@/lib/api/characters.js';
-import type { SessionInfo, SessionSummary } from '@/lib/api/sessions.js';
+import type { Character } from '@/lib/api/characters';
+import type { SessionInfo, SessionSummary } from '@/lib/api/sessions';
 
 export const MOCK_CHARACTER: Character = {
   id: 'char_123',

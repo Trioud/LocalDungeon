@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/authStore';
-import { useCharacterList, useDeleteCharacter } from '@/lib/hooks/useCharacter.js';
-import type { Character } from '@/lib/api/characters.js';
+import { useCharacterList, useDeleteCharacter } from '@/lib/hooks/useCharacter';
+import type { Character } from '@/lib/api/characters';
 
 function getInitials(name: string) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);

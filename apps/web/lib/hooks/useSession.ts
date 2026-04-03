@@ -1,6 +1,6 @@
 'use client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { createSession, listSessions, getSession, joinSession, leaveSession } from '../api/sessions.js';
+import { createSession, listSessions, getSession, joinSession, leaveSession } from '@/lib/api/sessions';
 
 export function useSessionList() {
   return useQuery({ queryKey: ['sessions'], queryFn: listSessions });

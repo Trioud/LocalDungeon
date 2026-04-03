@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { server } from '@/test/mocks/server.js';
+import { server } from '@/test/mocks/server';
 import { http, HttpResponse } from 'msw';
 import DashboardPage from '../page';
-import { MOCK_CHARACTER } from '@/test/mocks/handlers.js';
+import { MOCK_CHARACTER } from '@/test/mocks/handlers';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),

@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCharacter, patchCharacter, deleteCharacter, listCharacters } from '../api/characters.js';
-import type { Character } from '../api/characters.js';
+import { getCharacter, patchCharacter, deleteCharacter, listCharacters } from '@/lib/api/characters';
+import type { Character } from '@/lib/api/characters';
 
 export function useCharacterList() {
   return useQuery({ queryKey: ['characters'], queryFn: listCharacters });
