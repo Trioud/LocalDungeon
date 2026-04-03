@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useCreateSession } from '../../../../lib/hooks/useSession.js';
+import { useCreateSession } from '@/lib/hooks/useSession';
 
 const schema = z.object({
   name: z.string().min(2).max(80),

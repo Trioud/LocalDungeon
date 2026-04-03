@@ -1,5 +1,5 @@
 'use client';
-import type { SessionPlayerInfo } from '../../lib/api/sessions.js';
+import type { SessionPlayerInfo } from '@/lib/api/sessions';
 
 interface PlayerListProps {
   players: SessionPlayerInfo[];

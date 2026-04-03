@@ -7,9 +7,19 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     rules: {
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
+    },
+  },
+  {
+    // Relax unused-vars in test files — vi, beforeEach etc. are often imported for side-effects
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/test/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_|vi|beforeEach|afterEach|beforeAll|afterAll|ClientSocket',
+      }],
     },
   },
   {

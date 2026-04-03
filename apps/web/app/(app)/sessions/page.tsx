@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useSessionList, useJoinSession } from '../../../lib/hooks/useSession.js';
-import { useCharacterList } from '../../../lib/hooks/useCharacter.js';
-import type { SessionSummary } from '../../../lib/api/sessions.js';
+import { useSessionList, useJoinSession } from '@/lib/hooks/useSession';
+import { useCharacterList } from '@/lib/hooks/useCharacter';
+import type { SessionSummary } from '@/lib/api/sessions';
 
 function StatusBadge({ status }: { status: string }) {
   if (status === 'lobby') return <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-800">🟢 Lobby</span>;

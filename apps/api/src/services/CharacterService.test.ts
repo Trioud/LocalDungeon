@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CharacterService } from './CharacterService.js';
-import type { ICharacterRepository, Character, CharacterSummary } from '../ports/ICharacterRepository.js';
+import type { ICharacterRepository, Character } from '../ports/ICharacterRepository.js';
 import type { IGameDataRepository } from '../ports/IGameDataRepository.js';
 
 const mockClass = {

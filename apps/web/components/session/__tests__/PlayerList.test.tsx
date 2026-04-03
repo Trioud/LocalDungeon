@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import PlayerList from '../PlayerList.js';
-import type { SessionPlayerInfo } from '../../../lib/api/sessions.js';
+import PlayerList from '../PlayerList';
+import type { SessionPlayerInfo } from '@/lib/api/sessions';
 
 const PLAYER: SessionPlayerInfo = {
   id: 'sp_1',

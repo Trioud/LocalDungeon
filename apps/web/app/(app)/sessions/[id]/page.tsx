@@ -1,10 +1,10 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useSessionInfo, useLeaveSession } from '../../../../lib/hooks/useSession.js';
-import { useSessionSocket } from '../../../../lib/hooks/useSessionSocket.js';
-import { useAuthStore } from '../../../../lib/stores/authStore.js';
-import PlayerList from '../../../../components/session/PlayerList.js';
+import { useSessionInfo, useLeaveSession } from '@/lib/hooks/useSession';
+import { useSessionSocket } from '@/lib/hooks/useSessionSocket';
+import { useAuthStore } from '@/lib/stores/authStore';
+import PlayerList from '@/components/session/PlayerList';
 
 function PhaseBadge({ phase }: { phase: string }) {
   if (phase === 'combat') return <span className="text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-800">⚔️ Combat</span>;
