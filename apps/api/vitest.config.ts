@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import path from 'path';
 
 export default defineConfig({
   test: {
@@ -19,7 +20,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@local-dungeon/shared': '/Users/guillaumecristiani/Work/Personal/D-D_Expanded/packages/shared/src/index.ts',
+      '@local-dungeon/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
     },
   },
 });
