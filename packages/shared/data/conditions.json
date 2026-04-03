@@ -1,0 +1,154 @@
+[
+  {
+    "name": "Blinded",
+    "description": "A Blinded creature can't see and automatically fails any ability check that requires sight.",
+    "effects": [
+      "Can't see; automatically fails ability checks requiring sight",
+      "Attack rolls against it have Advantage",
+      "Its attack rolls have Disadvantage"
+    ]
+  },
+  {
+    "name": "Charmed",
+    "description": "A Charmed creature can't attack the charmer or target the charmer with harmful abilities or magical effects.",
+    "effects": [
+      "Can't attack the charmer or target it with harmful abilities or magical effects",
+      "The charmer has Advantage on any ability check to interact socially with the creature"
+    ]
+  },
+  {
+    "name": "Deafened",
+    "description": "A Deafened creature can't hear and automatically fails any ability check that requires hearing.",
+    "effects": [
+      "Can't hear; automatically fails ability checks requiring hearing"
+    ]
+  },
+  {
+    "name": "Exhaustion",
+    "description": "Exhaustion is measured in six levels. Each time a creature receives this condition, it gains 1 level of Exhaustion. A creature suffers the cumulative effect of all its Exhaustion levels.",
+    "effects": [
+      "Level 1: -2 penalty to d20 tests",
+      "Level 2: -4 penalty to d20 tests",
+      "Level 3: -6 penalty to d20 tests",
+      "Level 4: -8 penalty to d20 tests",
+      "Level 5: -10 penalty to d20 tests; Speed halved",
+      "Level 6: Death",
+      "Finishing a Long Rest removes 1 level of Exhaustion",
+      "Each level is cumulative; the -2 penalty applies to all d20 tests (ability checks, saving throws, and attack rolls)"
+    ]
+  },
+  {
+    "name": "Frightened",
+    "description": "A Frightened creature has Disadvantage on ability checks and attack rolls while the source of its fear is within line of sight. The creature can't willingly move closer to the source of its fear.",
+    "effects": [
+      "Disadvantage on ability checks and attack rolls while the source of fear is within line of sight",
+      "Can't willingly move closer to the source of its fear"
+    ]
+  },
+  {
+    "name": "Grappled",
+    "description": "A Grappled creature's Speed becomes 0, and it can't benefit from any bonus to its Speed.",
+    "effects": [
+      "Speed becomes 0",
+      "Can't benefit from any bonus to Speed",
+      "Condition ends if the grappler is incapacitated",
+      "Condition ends if the creature is removed from the reach of the grappler"
+    ]
+  },
+  {
+    "name": "Incapacitated",
+    "description": "An Incapacitated creature can't take actions or reactions.",
+    "effects": [
+      "Can't take actions",
+      "Can't take reactions"
+    ]
+  },
+  {
+    "name": "Invisible",
+    "description": "An Invisible creature is impossible to see without the aid of magic or a Special Sense.",
+    "effects": [
+      "Impossible to see without magic or a special sense",
+      "For purposes of hiding, the creature is heavily obscured",
+      "Attack rolls against it have Disadvantage",
+      "Its attack rolls have Advantage"
+    ]
+  },
+  {
+    "name": "Paralyzed",
+    "description": "A Paralyzed creature is Incapacitated and can't move or speak.",
+    "effects": [
+      "Incapacitated (can't take actions or reactions)",
+      "Can't move",
+      "Can't speak",
+      "Automatically fails Strength and Dexterity saving throws",
+      "Attack rolls against it have Advantage",
+      "Any attack that hits it is a critical hit if the attacker is within 5 feet"
+    ]
+  },
+  {
+    "name": "Petrified",
+    "description": "A Petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone).",
+    "effects": [
+      "Weight increases tenfold and ceases aging",
+      "Incapacitated (can't take actions or reactions)",
+      "Can't move or speak",
+      "Unaware of surroundings",
+      "Attack rolls against it have Advantage",
+      "Automatically fails Strength and Dexterity saving throws",
+      "Resistance to all damage",
+      "Immunity to Poison and Psychic damage"
+    ]
+  },
+  {
+    "name": "Poisoned",
+    "description": "A Poisoned creature has Disadvantage on attack rolls and ability checks.",
+    "effects": [
+      "Disadvantage on attack rolls",
+      "Disadvantage on ability checks"
+    ]
+  },
+  {
+    "name": "Prone",
+    "description": "A Prone creature's only Movement option is to crawl, unless it stands up and thereby ends the condition.",
+    "effects": [
+      "Only movement option is to crawl, or spend half its Speed to stand up (ending condition)",
+      "Disadvantage on attack rolls",
+      "Attack rolls against it have Advantage if attacker is within 5 feet; otherwise Disadvantage"
+    ]
+  },
+  {
+    "name": "Restrained",
+    "description": "A Restrained creature's Speed becomes 0, and it can't benefit from any bonus to its Speed.",
+    "effects": [
+      "Speed becomes 0",
+      "Can't benefit from any bonus to Speed",
+      "Attack rolls against it have Advantage",
+      "Its attack rolls have Disadvantage",
+      "Disadvantage on Dexterity saving throws"
+    ]
+  },
+  {
+    "name": "Stunned",
+    "description": "A Stunned creature is Incapacitated, can't move, and can speak only falteringly.",
+    "effects": [
+      "Incapacitated (can't take actions or reactions)",
+      "Can't move",
+      "Can speak only falteringly",
+      "Automatically fails Strength and Dexterity saving throws",
+      "Attack rolls against it have Advantage"
+    ]
+  },
+  {
+    "name": "Unconscious",
+    "description": "An Unconscious creature is Incapacitated, can't move or speak, and is unaware of its surroundings.",
+    "effects": [
+      "Incapacitated (can't take actions or reactions)",
+      "Can't move or speak",
+      "Unaware of surroundings",
+      "Drops whatever it's holding and falls Prone",
+      "Automatically fails Strength and Dexterity saving throws",
+      "Attack rolls against it have Advantage",
+      "Any attack that hits it is a critical hit if the attacker is within 5 feet"
+    ]
+  }
+]

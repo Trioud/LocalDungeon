@@ -6,6 +6,7 @@ import type { Env } from './env.js';
 import { buildContainer } from './container.js';
 import authenticatePlugin from './plugins/authenticate.js';
 import { authRoutes } from './handlers/authHandler.js';
+import { gameDataRoutes } from './handlers/gameDataHandler.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -43,6 +44,7 @@ export async function buildApp(env: Env) {
   });
 
   await app.register(authRoutes);
+  await app.register(gameDataRoutes);
 
   app.get('/health', async () => {
     return { status: 'ok' };
@@ -52,7 +54,7 @@ export async function buildApp(env: Env) {
     app.log.error(error);
     const statusCode = (error as any).statusCode ?? 500;
     reply.status(statusCode).send({
-      error: statusCode >= 500 ? 'Internal Server Error' : error.message,
+      error: statusCode >= 500 ? 'Internal Server Error' : (error as Error).message,
     });
   });
 

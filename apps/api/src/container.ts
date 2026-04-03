@@ -1,9 +1,11 @@
 import { createContainer, asValue, asClass, InjectionMode } from 'awilix';
 import { PrismaClient } from '@prisma/client';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { PrismaUserRepository } from './repositories/PrismaUserRepository.js';
+import { PrismaGameDataRepository } from './repositories/PrismaGameDataRepository.js';
 import { RedisSessionStateStore } from './repositories/RedisSessionStateStore.js';
 import { AuthService } from './services/AuthService.js';
+import { GameDataService } from './services/GameDataService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -22,6 +24,8 @@ export function buildContainer(env: Env) {
     userRepository: asClass(PrismaUserRepository).scoped(),
     sessionStateStore: asClass(RedisSessionStateStore).scoped(),
     authService: asClass(AuthService).scoped(),
+    gameDataRepository: asClass(PrismaGameDataRepository).scoped(),
+    gameDataService: asClass(GameDataService).scoped(),
   });
 
   return container;

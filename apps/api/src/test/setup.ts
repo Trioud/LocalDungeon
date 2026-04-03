@@ -1,3 +1,4 @@
+/// <reference types="vitest/globals" />
 // Global test setup for apps/api unit tests
 // No infrastructure — runs in milliseconds
 

@@ -17,3 +17,152 @@ model User {
 
   @@map("users")
 }
+
+model DndClass {
+  id             String     @id @default(cuid())
+  name           String     @unique
+  hitDie         Int        @map("hit_die")
+  description    String
+  primaryAbility String     @map("primary_ability")
+  savingThrows   String[]   @map("saving_throws")
+  armorProfs     String[]   @map("armor_profs")
+  weaponProfs    String[]   @map("weapon_profs")
+  toolProfs      String[]   @map("tool_profs")
+  skillChoices   Int        @map("skill_choices")
+  skillOptions   String[]   @map("skill_options")
+  features       Json
+  spellcasting   Json?
+  subclassLevel  Int        @map("subclass_level")
+  subclassLabel  String     @map("subclass_label")
+  subclasses     Subclass[]
+  createdAt      DateTime   @default(now()) @map("created_at")
+
+  @@map("dnd_classes")
+}
+
+model Subclass {
+  id          String   @id @default(cuid())
+  name        String
+  classId     String   @map("class_id")
+  class       DndClass @relation(fields: [classId], references: [id])
+  description String
+  features    Json
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@unique([classId, name])
+  @@map("subclasses")
+}
+
+model Species {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  size        String
+  speed       Int
+  traits      Json
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("species")
+}
+
+model Background {
+  id                 String   @id @default(cuid())
+  name               String   @unique
+  description        String
+  abilityScores      Json     @map("ability_scores")
+  skillProficiencies String[] @map("skill_proficiencies")
+  toolProficiencies  String[] @map("tool_proficiencies")
+  languages          Int
+  equipment          Json
+  originFeat         String   @map("origin_feat")
+  feature            Json
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@map("backgrounds")
+}
+
+model Feat {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  category     String
+  prerequisite String?
+  description  String
+  benefits     Json
+  repeatable   Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("feats")
+}
+
+model Spell {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  level          Int
+  school         String
+  castingTime    String   @map("casting_time")
+  range          String
+  components     String[]
+  materialDesc   String?  @map("material_desc")
+  duration       String
+  concentration  Boolean  @default(false)
+  ritual         Boolean  @default(false)
+  description    String
+  atHigherLevels String?  @map("at_higher_levels")
+  classes        String[]
+  source         String   @default("PHB 2024")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("spells")
+}
+
+model Weapon {
+  id         String   @id @default(cuid())
+  name       String   @unique
+  category   String
+  damageDice String   @map("damage_dice")
+  damageType String   @map("damage_type")
+  properties String[]
+  mastery    String?
+  weight     Float
+  cost       String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("weapons")
+}
+
+model Armor {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  category     String
+  baseAC       Int      @map("base_ac")
+  addDex       Boolean  @default(true) @map("add_dex")
+  maxDex       Int?     @map("max_dex")
+  strengthReq  Int?     @map("strength_req")
+  stealthDisadv Boolean @default(false) @map("stealth_disadv")
+  weight       Float
+  cost         String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("armor")
+}
+
+model Condition {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  effects     Json
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("conditions")
+}
+
+model Language {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  type      String
+  script    String?
+  speakers  String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("languages")
+}

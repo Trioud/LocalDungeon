@@ -1,0 +1,769 @@
+[
+  {
+    "name": "Barbarian",
+    "hitDie": 12,
+    "description": "A fierce warrior who can enter a battle rage, channeling primal fury to survive and overcome any obstacle.",
+    "primaryAbility": "Strength",
+    "savingThrows": ["Strength", "Constitution"],
+    "armorProfs": ["Light armor", "Medium armor", "Shields"],
+    "weaponProfs": ["Simple weapons", "Martial weapons"],
+    "toolProfs": [],
+    "skillChoices": 2,
+    "skillOptions": ["Animal Handling", "Athletics", "Intimidation", "Nature", "Perception", "Survival"],
+    "subclassLevel": 3,
+    "subclassLabel": "Primal Path",
+    "spellcasting": null,
+    "features": [
+      { "level": 1, "name": "Rage", "description": "In battle, you fight with primal ferocity. On your turn, you can enter a rage as a Bonus Action. While raging, you gain Advantage on Strength checks and saving throws, a bonus to melee damage rolls using Strength, and resistance to Bludgeoning, Piercing, and Slashing damage." },
+      { "level": 1, "name": "Unarmored Defense", "description": "While you aren't wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit." },
+      { "level": 2, "name": "Reckless Attack", "description": "You can throw aside all concern for defense to attack with fierce desperation. When you make your first attack roll on your turn, you can decide to attack recklessly, giving you Advantage on attack rolls using Strength until the start of your next turn, but attack rolls against you have Advantage during that time." },
+      { "level": 2, "name": "Danger Sense", "description": "You gain an uncanny sense of when things nearby aren't as they should be, giving you an edge when you dodge away from danger. You have Advantage on Dexterity saving throws, unless you have the Incapacitated condition." },
+      { "level": 3, "name": "Primal Path", "description": "You choose a Primal Path, a subclass that shapes the nature of your rage." },
+      { "level": 4, "name": "Ability Score Improvement", "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify." },
+      { "level": 5, "name": "Extra Attack", "description": "You can attack twice instead of once whenever you take the Attack action on your turn." },
+      { "level": 5, "name": "Fast Movement", "description": "Your speed increases by 10 feet while you aren't wearing heavy armor." },
+      { "level": 7, "name": "Feral Instinct", "description": "Your instincts are so honed that you have Advantage on Initiative rolls." },
+      { "level": 7, "name": "Instinctive Pounce", "description": "As part of the Bonus Action you take to enter your Rage, you can move up to half your Speed." },
+      { "level": 9, "name": "Brutal Strike", "description": "If you use Reckless Attack, you can forgo any Advantage on one Strength-based attack roll of your choice on your turn. The chosen attack roll mustn't have Disadvantage. If the chosen attack roll hits, the target takes an extra 1d10 damage of the same type dealt by the weapon or Unarmed Strike, and you can cause one Brutal Strike effect of your choice." },
+      { "level": 11, "name": "Relentless Rage", "description": "Your rage can keep you fighting despite grievous wounds. If you drop to 0 Hit Points while your Rage is active and you don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, your Hit Points instead change to a number equal to twice your Barbarian level." },
+      { "level": 20, "name": "Primal Champion", "description": "You embody primal power. Your Strength and Constitution scores increase by 4, and their maximum is now 24." }
+    ],
+    "subclasses": [
+      {
+        "name": "Path of the Berserker",
+        "description": "For some barbarians, rage is a means to an end — and that end is violence. The Path of the Berserker is a path of untrammeled fury, slick with blood.",
+        "features": [
+          { "level": 3, "name": "Frenzy", "description": "You can go into a frenzy when you Rage. If you do so, for the duration of your Rage you can make a single melee weapon attack as a Bonus Action on each of your turns after this one." },
+          { "level": 6, "name": "Mindless Rage", "description": "You can't be Charmed or Frightened while raging. If you are Charmed or Frightened when you enter your Rage, that condition is suspended for the duration of the Rage." },
+          { "level": 10, "name": "Retaliation", "description": "When you take damage from a creature that is within 5 feet of you, you can use your Reaction to make one melee weapon attack against that creature." },
+          { "level": 14, "name": "Intimidating Presence", "description": "You can use your action to frighten someone with your menacing presence." }
+        ]
+      },
+      {
+        "name": "Path of the Totem Warrior",
+        "description": "The Path of the Totem Warrior is a spiritual journey, as the barbarian accepts a spirit animal as guide, protector, and inspiration.",
+        "features": [
+          { "level": 3, "name": "Spirit Seeker", "description": "You can cast Beast Sense and Speak with Animals as rituals." },
+          { "level": 3, "name": "Totem Spirit", "description": "Choose a totem spirit (Bear, Eagle, Elk, Tiger, or Wolf) and gain its benefit while raging." },
+          { "level": 6, "name": "Aspect of the Beast", "description": "You gain a magical benefit based on the totem animal of your choice." },
+          { "level": 14, "name": "Totemic Attunement", "description": "You gain a magical benefit based on a totem animal of your choice." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Bard",
+    "hitDie": 8,
+    "description": "A master of song, speech, and the magic they contain, inspiring allies and weaving powerful enchantments.",
+    "primaryAbility": "Charisma",
+    "savingThrows": ["Dexterity", "Charisma"],
+    "armorProfs": ["Light armor"],
+    "weaponProfs": ["Simple weapons", "Hand crossbows", "Longswords", "Rapiers", "Shortswords"],
+    "toolProfs": ["Three musical instruments of your choice"],
+    "skillChoices": 3,
+    "skillOptions": ["Acrobatics", "Animal Handling", "Arcana", "Athletics", "Deception", "History", "Insight", "Intimidation", "Investigation", "Medicine", "Nature", "Perception", "Performance", "Persuasion", "Religion", "Sleight of Hand", "Stealth", "Survival"],
+    "subclassLevel": 3,
+    "subclassLabel": "Bard College",
+    "spellcasting": {
+      "ability": "Charisma",
+      "slots": [
+        [2,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,1],
+        [4,3,3,3,3,1,1,1,1],
+        [4,3,3,3,3,2,1,1,1],
+        [4,3,3,3,3,2,2,1,1]
+      ]
+    },
+    "features": [
+      { "level": 1, "name": "Bardic Inspiration", "description": "You can inspire others through stirring words or music. As a Bonus Action, you can give one creature other than yourself a Bardic Inspiration die, a d6. A creature can have only one Bardic Inspiration die at a time." },
+      { "level": 1, "name": "Spellcasting", "description": "You can cast Bard spells using Charisma as your spellcasting ability." },
+      { "level": 2, "name": "Jack of All Trades", "description": "You can add half your proficiency bonus, rounded down, to any ability check you make that doesn't already include your proficiency bonus." },
+      { "level": 2, "name": "Song of Rest", "description": "You can use soothing music or oration to help revitalize your wounded allies during a Short Rest." },
+      { "level": 3, "name": "Bard College", "description": "You delve into the advanced techniques of a Bard College of your choice." },
+      { "level": 3, "name": "Expertise", "description": "Choose two of your skill proficiencies. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies." },
+      { "level": 4, "name": "Ability Score Improvement", "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify." },
+      { "level": 5, "name": "Font of Inspiration", "description": "You now regain all your expended uses of Bardic Inspiration when you finish a Short or Long Rest." },
+      { "level": 6, "name": "Countercharm", "description": "You gain the ability to use musical notes or words of power to disrupt mind-influencing effects." },
+      { "level": 9, "name": "Magical Secrets", "description": "You have plundered magical knowledge from a wide spectrum of disciplines. Choose two spells from any classes, including this one." },
+      { "level": 20, "name": "Superior Inspiration", "description": "When you roll Initiative, you regain expended uses of Bardic Inspiration until you have two if you have fewer than that." }
+    ],
+    "subclasses": [
+      {
+        "name": "College of Lore",
+        "description": "Bards of the College of Lore know something about most things, collecting bits of knowledge from sources as diverse as scholarly tomes and peasant tales.",
+        "features": [
+          { "level": 3, "name": "Bonus Proficiencies", "description": "You gain proficiency with three skills of your choice." },
+          { "level": 3, "name": "Cutting Words", "description": "You learn how to use your wit to distract, confuse, and otherwise sap the confidence and competence of others. When a creature that you can see within 60 feet of you makes an attack roll, an ability check, or a damage roll, you can use your Reaction to expend one use of your Bardic Inspiration, rolling a Bardic Inspiration die and subtracting the number rolled from the creature's roll." },
+          { "level": 6, "name": "Magical Discoveries", "description": "You learn two spells of your choice from any class. These spells count as Bard spells for you." },
+          { "level": 14, "name": "Peerless Skill", "description": "When you make an ability check, you can expend one use of Bardic Inspiration. Roll a Bardic Inspiration die, and add the number rolled to your ability check." }
+        ]
+      },
+      {
+        "name": "College of Valor",
+        "description": "Bards of the College of Valor are daring skalds whose tales keep alive the memory of the great heroes of the past.",
+        "features": [
+          { "level": 3, "name": "Bonus Proficiencies", "description": "You gain proficiency with Medium armor, Shields, and Martial weapons." },
+          { "level": 3, "name": "Combat Inspiration", "description": "A creature that has a Bardic Inspiration die from you can roll that die and add the number rolled to a weapon damage roll it just made. Alternatively, when an attack roll is made against the creature, it can use its Reaction to roll the Bardic Inspiration die and add the number rolled to its AC against that attack." },
+          { "level": 6, "name": "Extra Attack", "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn." },
+          { "level": 14, "name": "Battle Magic", "description": "You have mastered the art of weaving spellcasting and weapon use into a single harmonious act. When you use your action to cast a Bard spell, you can make one weapon attack as a Bonus Action." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Cleric",
+    "hitDie": 8,
+    "description": "A priestly champion who wields divine magic in service of a higher power, healing allies and smiting foes.",
+    "primaryAbility": "Wisdom",
+    "savingThrows": ["Wisdom", "Charisma"],
+    "armorProfs": ["Light armor", "Medium armor", "Shields"],
+    "weaponProfs": ["Simple weapons"],
+    "toolProfs": [],
+    "skillChoices": 2,
+    "skillOptions": ["History", "Insight", "Medicine", "Persuasion", "Religion"],
+    "subclassLevel": 3,
+    "subclassLabel": "Divine Domain",
+    "spellcasting": {
+      "ability": "Wisdom",
+      "slots": [
+        [2,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,1],
+        [4,3,3,3,3,1,1,1,1],
+        [4,3,3,3,3,2,1,1,1],
+        [4,3,3,3,3,2,2,1,1]
+      ]
+    },
+    "features": [
+      { "level": 1, "name": "Divine Domain", "description": "Choose a domain related to your deity. Your choice grants you domain spells and other features at 3rd level." },
+      { "level": 1, "name": "Spellcasting", "description": "As a conduit for divine power, you can cast Cleric spells using Wisdom as your spellcasting ability." },
+      { "level": 2, "name": "Channel Divinity", "description": "You gain the ability to channel divine energy directly from your deity, using that energy to fuel magical effects." },
+      { "level": 2, "name": "Turn Undead", "description": "As a Channel Divinity, you can use your Channel Divinity to turn undead. Each undead that can see or hear you must make a Wisdom saving throw." },
+      { "level": 5, "name": "Destroy Undead", "description": "When an undead fails its saving throw against your Turn Undead feature, it is instantly destroyed if its challenge rating is at or below 1/2." },
+      { "level": 10, "name": "Divine Intervention", "description": "You can call on your deity to intervene on your behalf when your need is great." },
+      { "level": 20, "name": "Greater Divine Intervention", "description": "Your Divine Intervention now always succeeds." }
+    ],
+    "subclasses": [
+      {
+        "name": "Life Domain",
+        "description": "The Life domain focuses on the vibrant positive energy—one of the fundamental forces of the universe—that sustains all life.",
+        "features": [
+          { "level": 3, "name": "Bonus Proficiency", "description": "You gain proficiency with Heavy armor." },
+          { "level": 3, "name": "Disciple of Life", "description": "Your healing spells are more effective. Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level." },
+          { "level": 6, "name": "Blessed Healer", "description": "The healing spells you cast on others heal you as well. When you cast a spell of 1st level or higher that restores hit points to a creature other than you, you regain hit points equal to 2 + the spell's level." },
+          { "level": 17, "name": "Supreme Healing", "description": "When you would normally roll one or more dice to restore hit points with a spell, you instead use the highest number possible for each die." }
+        ]
+      },
+      {
+        "name": "Light Domain",
+        "description": "Gods of light promote the ideals of rebirth and renewal, truth, vigilance, and beauty.",
+        "features": [
+          { "level": 3, "name": "Bonus Cantrip", "description": "You gain the Light cantrip if you don't already know it." },
+          { "level": 3, "name": "Warding Flare", "description": "You can interpose divine light between yourself and an attacking enemy. When you are attacked by a creature within 30 feet of you that you can see, you can use your Reaction to impose disadvantage on the attack roll." },
+          { "level": 6, "name": "Improved Flare", "description": "You can use your Warding Flare feature when a creature that you can see within 30 feet of you attacks a creature other than you." },
+          { "level": 17, "name": "Corona of Light", "description": "You can use your action to activate an aura of sunlight that lasts for 1 minute or until you dismiss it using another action." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Druid",
+    "hitDie": 8,
+    "description": "A priest of the Old Faith, wielding the powers of nature and adopting animal forms.",
+    "primaryAbility": "Wisdom",
+    "savingThrows": ["Intelligence", "Wisdom"],
+    "armorProfs": ["Light armor", "Medium armor", "Shields"],
+    "weaponProfs": ["Clubs", "Daggers", "Darts", "Javelins", "Maces", "Quarterstaffs", "Scimitars", "Sickles", "Slings", "Spears"],
+    "toolProfs": ["Herbalism kit"],
+    "skillChoices": 2,
+    "skillOptions": ["Arcana", "Animal Handling", "Insight", "Medicine", "Nature", "Perception", "Religion", "Survival"],
+    "subclassLevel": 2,
+    "subclassLabel": "Druid Circle",
+    "spellcasting": {
+      "ability": "Wisdom",
+      "slots": [
+        [2,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,1],
+        [4,3,3,3,3,1,1,1,1],
+        [4,3,3,3,3,2,1,1,1],
+        [4,3,3,3,3,2,2,1,1]
+      ]
+    },
+    "features": [
+      { "level": 1, "name": "Druidic", "description": "You know Druidic, the secret language of druids. Speaking the language requires no components." },
+      { "level": 1, "name": "Spellcasting", "description": "Drawing on the divine essence of nature itself, you can cast spells using Wisdom as your spellcasting ability." },
+      { "level": 2, "name": "Wild Shape", "description": "You can use your action to magically assume the shape of a beast that you have seen before." },
+      { "level": 2, "name": "Druid Circle", "description": "You choose to identify with a circle of druids. Your choice grants features at 2nd level and again at 6th, 10th, and 14th level." },
+      { "level": 4, "name": "Ability Score Improvement", "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify." },
+      { "level": 18, "name": "Timeless Body", "description": "The primal magic that you wield causes you to age more slowly." },
+      { "level": 18, "name": "Beast Spells", "description": "You can cast many of your druid spells in any shape you assume using Wild Shape." },
+      { "level": 20, "name": "Archdruid", "description": "You can use your Wild Shape an unlimited number of times, and you can ignore the verbal and somatic components of your druid spells, as well as any material components that lack a cost and aren't consumed by a spell." }
+    ],
+    "subclasses": [
+      {
+        "name": "Circle of the Land",
+        "description": "The Circle of the Land is made up of mystics and sages who safeguard ancient knowledge and rites through a vast oral tradition.",
+        "features": [
+          { "level": 2, "name": "Bonus Cantrip", "description": "You learn one additional druid cantrip of your choice." },
+          { "level": 2, "name": "Natural Recovery", "description": "You can regain some of your magical energy by sitting in meditation and communing with nature. During a Short Rest, you can recover expended spell slots." },
+          { "level": 2, "name": "Circle Spells", "description": "Your mystical connection to the land infuses you with the ability to cast certain spells. At 3rd, 5th, 7th, and 9th level you gain access to circle spells connected to the land where you became a druid." },
+          { "level": 10, "name": "Nature's Ward", "description": "You can't be Charmed or Frightened by elementals or fey, and you are immune to poison and disease." }
+        ]
+      },
+      {
+        "name": "Circle of the Moon",
+        "description": "Druids of the Circle of the Moon are fierce guardians of the wilds. Their order gathers under the full moon to share news and trade warnings.",
+        "features": [
+          { "level": 2, "name": "Combat Wild Shape", "description": "You gain the ability to use Wild Shape on your turn as a Bonus Action, rather than as an action." },
+          { "level": 2, "name": "Circle Forms", "description": "The rites of your circle grant you the ability to transform into more dangerous animal forms." },
+          { "level": 6, "name": "Primal Strike", "description": "Your attacks in beast form count as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage." },
+          { "level": 10, "name": "Elemental Wild Shape", "description": "You can expend two uses of Wild Shape at the same time to transform into an air elemental, an earth elemental, a fire elemental, or a water elemental." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Fighter",
+    "hitDie": 10,
+    "description": "A master of martial combat, skilled with a variety of weapons and armor.",
+    "primaryAbility": "Strength or Dexterity",
+    "savingThrows": ["Strength", "Constitution"],
+    "armorProfs": ["All armor", "Shields"],
+    "weaponProfs": ["Simple weapons", "Martial weapons"],
+    "toolProfs": [],
+    "skillChoices": 2,
+    "skillOptions": ["Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival"],
+    "subclassLevel": 3,
+    "subclassLabel": "Martial Archetype",
+    "spellcasting": null,
+    "features": [
+      { "level": 1, "name": "Fighting Style", "description": "You adopt a particular style of fighting as your specialty. Choose a Fighting Style feat." },
+      { "level": 1, "name": "Second Wind", "description": "You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a Bonus Action to regain hit points equal to 1d10 + your Fighter level." },
+      { "level": 2, "name": "Action Surge", "description": "You can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action on top of your regular action and a possible Bonus Action." },
+      { "level": 3, "name": "Martial Archetype", "description": "You choose an archetype that you strive to emulate in your combat styles and techniques." },
+      { "level": 4, "name": "Ability Score Improvement", "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify." },
+      { "level": 5, "name": "Extra Attack", "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn." },
+      { "level": 9, "name": "Indomitable", "description": "You can reroll a saving throw that you fail. If you do so, you must use the new roll, and you can't use this feature again until you finish a Long Rest." },
+      { "level": 11, "name": "Extra Attack (2)", "description": "You can attack three times whenever you take the Attack action on your turn." },
+      { "level": 20, "name": "Extra Attack (3)", "description": "You can attack four times whenever you take the Attack action on your turn." }
+    ],
+    "subclasses": [
+      {
+        "name": "Champion",
+        "description": "The archetypal Champion focuses on the development of raw physical power honed to deadly perfection.",
+        "features": [
+          { "level": 3, "name": "Improved Critical", "description": "Your weapon attacks score a critical hit on a roll of 19 or 20." },
+          { "level": 7, "name": "Remarkable Athlete", "description": "You can add half your proficiency bonus to any Strength, Dexterity, or Constitution check you make that doesn't already use your proficiency bonus." },
+          { "level": 10, "name": "Additional Fighting Style", "description": "You can choose a second option from the Fighting Style class feature." },
+          { "level": 15, "name": "Superior Critical", "description": "Your weapon attacks score a critical hit on a roll of 18–20." },
+          { "level": 18, "name": "Survivor", "description": "You attain the pinnacle of resilience in battle. At the start of each of your turns, you regain hit points equal to 5 + your Constitution modifier if you have no more than half of your hit points left." }
+        ]
+      },
+      {
+        "name": "Battle Master",
+        "description": "Those who emulate the archetype of the Battle Master employ martial techniques passed down through generations.",
+        "features": [
+          { "level": 3, "name": "Combat Superiority", "description": "You learn maneuvers that are fueled by special dice called superiority dice. You learn three maneuvers of your choice, and you have four superiority dice (d8)." },
+          { "level": 3, "name": "Student of War", "description": "You gain proficiency with one type of artisan's tools of your choice." },
+          { "level": 7, "name": "Know Your Enemy", "description": "If you spend at least 1 minute observing or interacting with another creature outside combat, you can learn certain information about its capabilities compared to your own." },
+          { "level": 15, "name": "Relentless", "description": "When you roll Initiative and have no superiority dice remaining, you regain 1 superiority die." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Monk",
+    "hitDie": 8,
+    "description": "A master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection.",
+    "primaryAbility": "Dexterity and Wisdom",
+    "savingThrows": ["Strength", "Dexterity"],
+    "armorProfs": [],
+    "weaponProfs": ["Simple weapons", "Shortswords"],
+    "toolProfs": ["One type of artisan's tools or one musical instrument"],
+    "skillChoices": 2,
+    "skillOptions": ["Acrobatics", "Athletics", "History", "Insight", "Religion", "Stealth"],
+    "subclassLevel": 3,
+    "subclassLabel": "Monastic Tradition",
+    "spellcasting": null,
+    "features": [
+      { "level": 1, "name": "Unarmored Defense", "description": "While you are wearing no armor and not wielding a Shield, your AC equals 10 + your Dexterity modifier + your Wisdom modifier." },
+      { "level": 1, "name": "Martial Arts", "description": "Your practice of martial arts gives you mastery of combat styles that use unarmed strikes and monk weapons. You gain the following benefits: you can use Dexterity instead of Strength for attack and damage rolls; your unarmed strikes deal 1d6 damage; you can make one Unarmed Strike as a Bonus Action." },
+      { "level": 2, "name": "Ki", "description": "Your training allows you to harness the mystic energy of ki. You have a number of ki points equal to your monk level." },
+      { "level": 2, "name": "Unarmored Movement", "description": "Your speed increases by 10 feet while you are not wearing armor or wielding a shield." },
+      { "level": 3, "name": "Monastic Tradition", "description": "You commit yourself to a monastic tradition of your choice." },
+      { "level": 3, "name": "Deflect Missiles", "description": "You can use your Reaction to deflect or catch the missile when you are hit by a ranged weapon attack." },
+      { "level": 4, "name": "Slow Fall", "description": "You can use your Reaction when you fall to reduce any falling damage you take by an amount equal to five times your monk level." },
+      { "level": 5, "name": "Extra Attack", "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn." },
+      { "level": 5, "name": "Stunning Strike", "description": "You can interfere with the flow of ki in an opponent's body. When you hit another creature with a melee weapon attack, you can spend 1 ki point to attempt a stunning strike." },
+      { "level": 18, "name": "Empty Body", "description": "You can use your action to spend 4 ki points to become invisible for 1 minute." },
+      { "level": 20, "name": "Perfect Self", "description": "When you roll for initiative and have no ki points remaining, you regain 4 ki points." }
+    ],
+    "subclasses": [
+      {
+        "name": "Way of the Open Hand",
+        "description": "Monks of the Way of the Open Hand are the ultimate masters of martial arts combat, whether armed or unarmed.",
+        "features": [
+          { "level": 3, "name": "Open Hand Technique", "description": "You can manipulate your enemy's ki when you harness your own. Whenever you hit a creature with one of the attacks granted by your Flurry of Blows, you can impose one of the following effects on that target." },
+          { "level": 6, "name": "Wholeness of Body", "description": "You gain the ability to heal yourself. As an action, you can regain hit points equal to three times your monk level." },
+          { "level": 11, "name": "Tranquility", "description": "You can enter a special meditation that surrounds you with an aura of peace. At the end of a long rest, you gain the effect of a Sanctuary spell that lasts until the start of your next long rest." },
+          { "level": 17, "name": "Quivering Palm", "description": "You gain the ability to set up lethal vibrations in someone's body." }
+        ]
+      },
+      {
+        "name": "Way of Shadow",
+        "description": "Monks of the Way of Shadow follow a tradition that values stealth and subterfuge.",
+        "features": [
+          { "level": 3, "name": "Shadow Arts", "description": "You can use your ki to duplicate the effects of certain spells. As an action, you can spend 2 ki points to cast Darkness, Darkvision, Pass without Trace, or Silence." },
+          { "level": 6, "name": "Shadow Step", "description": "You gain the ability to step from one shadow into another. When you are in dim light or darkness, as a Bonus Action you can teleport up to 60 feet to an unoccupied space you can see that is also in dim light or darkness." },
+          { "level": 11, "name": "Cloak of Shadows", "description": "You have learned to become one with shadows. When you are in an area of dim light or darkness, you can use your action to become invisible." },
+          { "level": 17, "name": "Opportunist", "description": "You can exploit a creature's momentary distraction when it is hit by an attack. Whenever a creature within 5 feet of you is hit by an attack made by a creature other than you, you can use your Reaction to make a melee attack against that creature." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Paladin",
+    "hitDie": 10,
+    "description": "A holy warrior bound by a sacred oath to fight evil and uphold justice.",
+    "primaryAbility": "Strength and Charisma",
+    "savingThrows": ["Wisdom", "Charisma"],
+    "armorProfs": ["All armor", "Shields"],
+    "weaponProfs": ["Simple weapons", "Martial weapons"],
+    "toolProfs": [],
+    "skillChoices": 2,
+    "skillOptions": ["Athletics", "Insight", "Intimidation", "Medicine", "Persuasion", "Religion"],
+    "subclassLevel": 3,
+    "subclassLabel": "Sacred Oath",
+    "spellcasting": {
+      "ability": "Charisma",
+      "slots": [
+        [0,0,0,0,0,0,0,0,0],
+        [2,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0]
+      ]
+    },
+    "features": [
+      { "level": 1, "name": "Divine Sense", "description": "The presence of strong evil registers on your senses like a noxious odor, and powerful good rings like heavenly music in your ears. As an action, you can open your awareness to detect such forces." },
+      { "level": 1, "name": "Lay on Hands", "description": "Your blessed touch can heal wounds. You have a pool of healing power that replenishes when you take a long rest. With that pool, you can restore a total number of hit points equal to your paladin level × 5." },
+      { "level": 2, "name": "Fighting Style", "description": "You adopt a particular style of fighting as your specialty. Choose a Fighting Style feat." },
+      { "level": 2, "name": "Spellcasting", "description": "You have learned to draw on divine magic through meditation and prayer to cast spells using Charisma as your spellcasting ability." },
+      { "level": 2, "name": "Divine Smite", "description": "When you hit a creature with a melee weapon attack, you can expend one paladin spell slot to deal radiant damage to the target, in addition to the weapon's damage." },
+      { "level": 3, "name": "Sacred Oath", "description": "You swear the oath that binds you as a paladin forever. Your choice grants you oath spells and other features." },
+      { "level": 3, "name": "Channel Divinity", "description": "Your oath allows you to channel divine energy to fuel magical effects." },
+      { "level": 5, "name": "Extra Attack", "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn." },
+      { "level": 6, "name": "Aura of Protection", "description": "Whenever you or a friendly creature within 10 feet of you must make a saving throw, the creature gains a bonus to the saving throw equal to your Charisma modifier (minimum of +1). You must be conscious to grant this bonus." },
+      { "level": 20, "name": "Sacred Weapon", "description": "As an action, you can imbue one weapon that you are holding with positive energy, using your Channel Divinity." }
+    ],
+    "subclasses": [
+      {
+        "name": "Oath of Devotion",
+        "description": "The Oath of Devotion binds a paladin to the loftiest ideals of justice, virtue, and order.",
+        "features": [
+          { "level": 3, "name": "Sacred Weapon", "description": "As an action, you can imbue one weapon that you are holding with positive energy." },
+          { "level": 3, "name": "Turn the Unholy", "description": "As an action, you present your holy symbol and speak a prayer censuring fiends and undead." },
+          { "level": 7, "name": "Aura of Devotion", "description": "You and friendly creatures within 10 feet of you can't be Charmed while you are conscious." },
+          { "level": 20, "name": "Holy Nimbus", "description": "As an action, you can emanate an aura of sunlight. For 1 minute, bright light shines from you in a 30-foot radius." }
+        ]
+      },
+      {
+        "name": "Oath of the Ancients",
+        "description": "The Oath of the Ancients is as old as the race of elves and the rituals of the druids. Sometimes called fey knights, green knights, or horned knights.",
+        "features": [
+          { "level": 3, "name": "Nature's Wrath", "description": "You can use your Channel Divinity to invoke primeval forces to ensnare a foe." },
+          { "level": 3, "name": "Turn the Faithless", "description": "You can use your Channel Divinity to utter ancient words that are painful for fey and fiends to hear." },
+          { "level": 7, "name": "Aura of Warding", "description": "Ancient magic lies so heavily upon you that it forms an eldritch ward." },
+          { "level": 20, "name": "Elder Champion", "description": "You can assume the form of an ancient force of nature, taking on an appearance you choose." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Ranger",
+    "hitDie": 10,
+    "description": "A warrior who uses martial prowess and nature magic to combat threats on the edges of civilization.",
+    "primaryAbility": "Dexterity and Wisdom",
+    "savingThrows": ["Strength", "Dexterity"],
+    "armorProfs": ["Light armor", "Medium armor", "Shields"],
+    "weaponProfs": ["Simple weapons", "Martial weapons"],
+    "toolProfs": [],
+    "skillChoices": 3,
+    "skillOptions": ["Animal Handling", "Athletics", "Insight", "Investigation", "Nature", "Perception", "Stealth", "Survival"],
+    "subclassLevel": 3,
+    "subclassLabel": "Ranger Archetype",
+    "spellcasting": {
+      "ability": "Wisdom",
+      "slots": [
+        [0,0,0,0,0,0,0,0,0],
+        [2,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0]
+      ]
+    },
+    "features": [
+      { "level": 1, "name": "Favored Enemy", "description": "You have significant experience studying, tracking, hunting, and even talking to a certain type of enemy. Choose a type of favored enemy: aberrations, beasts, celestials, constructs, dragons, elementals, fey, fiends, giants, monstrosities, oozes, plants, or undead." },
+      { "level": 1, "name": "Natural Explorer", "description": "You are particularly familiar with one type of natural environment and are adept at traveling and surviving in such regions." },
+      { "level": 2, "name": "Fighting Style", "description": "You adopt a particular style of fighting as your specialty. Choose a Fighting Style feat." },
+      { "level": 2, "name": "Spellcasting", "description": "You have learned to use the magical essence of nature to cast spells using Wisdom as your spellcasting ability." },
+      { "level": 3, "name": "Ranger Archetype", "description": "You choose an archetype that you strive to emulate." },
+      { "level": 3, "name": "Primeval Awareness", "description": "You can use your action and expend one ranger spell slot to focus your awareness on the region around you." },
+      { "level": 5, "name": "Extra Attack", "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn." },
+      { "level": 20, "name": "Foe Slayer", "description": "You become an unparalleled hunter of your enemies. Once on each of your turns, you can add your Wisdom modifier to the attack roll or the damage roll of an attack you make against one of your favored enemies." }
+    ],
+    "subclasses": [
+      {
+        "name": "Hunter",
+        "description": "Emulating the Hunter archetype means accepting your place as a bulwark between civilization and the terrors of the wilderness.",
+        "features": [
+          { "level": 3, "name": "Hunter's Prey", "description": "You gain one of the following features of your choice: Colossus Slayer, Giant Killer, or Horde Breaker." },
+          { "level": 7, "name": "Defensive Tactics", "description": "You gain one of the following features of your choice: Escape the Horde, Multiattack Defense, or Steel Will." },
+          { "level": 11, "name": "Multiattack", "description": "You gain one of the following features of your choice: Volley or Whirlwind Attack." },
+          { "level": 15, "name": "Superior Hunter's Defense", "description": "You gain one of the following features of your choice: Evasion, Stand Against the Tide, or Uncanny Dodge." }
+        ]
+      },
+      {
+        "name": "Beast Master",
+        "description": "The Beast Master archetype embodies a friendship between the civilized races and the beasts of the world.",
+        "features": [
+          { "level": 3, "name": "Ranger's Companion", "description": "You gain a beast companion that accompanies you on your adventures and is trained to fight alongside you." },
+          { "level": 7, "name": "Exceptional Training", "description": "On any of your turns when your companion doesn't attack, you can use a Bonus Action to command the beast to take the Dash, Disengage, Dodge, or Help action on its turn." },
+          { "level": 11, "name": "Bestial Fury", "description": "Your beast companion can make two attacks when you command it to use the Attack action." },
+          { "level": 15, "name": "Share Spells", "description": "When you cast a spell targeting yourself, you can also affect your beast companion with the spell if the beast is within 30 feet of you." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Rogue",
+    "hitDie": 8,
+    "description": "A scoundrel who uses stealth and trickery to overcome obstacles and enemies.",
+    "primaryAbility": "Dexterity",
+    "savingThrows": ["Dexterity", "Intelligence"],
+    "armorProfs": ["Light armor"],
+    "weaponProfs": ["Simple weapons", "Hand crossbows", "Longswords", "Rapiers", "Shortswords"],
+    "toolProfs": ["Thieves' tools"],
+    "skillChoices": 4,
+    "skillOptions": ["Acrobatics", "Athletics", "Deception", "Insight", "Intimidation", "Investigation", "Perception", "Performance", "Persuasion", "Sleight of Hand", "Stealth"],
+    "subclassLevel": 3,
+    "subclassLabel": "Roguish Archetype",
+    "spellcasting": null,
+    "features": [
+      { "level": 1, "name": "Expertise", "description": "Choose two of your skill proficiencies. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies." },
+      { "level": 1, "name": "Sneak Attack", "description": "You know how to strike subtly and exploit a foe's distraction. Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack if you have Advantage on the attack roll." },
+      { "level": 1, "name": "Thieves' Cant", "description": "During your rogue training you learned thieves' cant, a secret mix of dialect, jargon, and code that allows you to hide messages in seemingly normal conversation." },
+      { "level": 2, "name": "Cunning Action", "description": "Your quick thinking and agility allow you to move and act quickly. You can take a Bonus Action on each of your turns in combat to take the Dash, Disengage, or Hide action." },
+      { "level": 3, "name": "Roguish Archetype", "description": "You choose an archetype that you emulate in the exercise of your rogue abilities." },
+      { "level": 5, "name": "Uncanny Dodge", "description": "When an attacker that you can see hits you with an attack, you can use your Reaction to halve the attack's damage against you." },
+      { "level": 7, "name": "Evasion", "description": "You can nimbly dodge out of the way of certain area effects, such as a red dragon's fiery breath or an ice storm spell." },
+      { "level": 11, "name": "Reliable Talent", "description": "You have refined your chosen skills until they approach perfection. Whenever you make an ability check that lets you add your proficiency bonus, you can treat a d20 roll of 9 or lower as a 10." },
+      { "level": 20, "name": "Stroke of Luck", "description": "You have an uncanny knack for succeeding when you need to. If your attack misses a target within range, you can turn the miss into a hit. Alternatively, if you fail an ability check, you can treat the d20 roll as a 20." }
+    ],
+    "subclasses": [
+      {
+        "name": "Thief",
+        "description": "You hone your skills in the larcenous arts. Burglars, bandits, cutpurses, and other criminals typically follow this archetype.",
+        "features": [
+          { "level": 3, "name": "Fast Hands", "description": "You can use the Bonus Action granted by your Cunning Action to make a Dexterity (Sleight of Hand) check, use your thieves' tools to disarm a trap or open a lock, or take the Use an Object action." },
+          { "level": 3, "name": "Second-Story Work", "description": "You gain the ability to climb faster than normal; climbing no longer costs you extra movement. In addition, when you make a running jump, the distance you cover increases by a number of feet equal to your Dexterity modifier." },
+          { "level": 9, "name": "Supreme Sneak", "description": "You have Advantage on a Dexterity (Stealth) check if you move no more than half your speed on the same turn." },
+          { "level": 13, "name": "Use Magic Device", "description": "You have learned enough about the workings of magic that you can improvise the use of items even when they are not intended for you." }
+        ]
+      },
+      {
+        "name": "Arcane Trickster",
+        "description": "Some rogues enhance their fine-honed skills of stealth and agility with magic, learning tricks of enchantment and illusion.",
+        "features": [
+          { "level": 3, "name": "Spellcasting", "description": "You gain the ability to cast spells. You learn three wizard cantrips and two 1st-level spells from the Enchantment or Illusion schools." },
+          { "level": 3, "name": "Mage Hand Legerdemain", "description": "When you cast Mage Hand, you can make the spectral hand invisible, and you can perform the following additional tasks with it." },
+          { "level": 9, "name": "Magical Ambush", "description": "If you are hidden from a creature when you cast a spell on it, the creature has Disadvantage on any saving throw it makes against the spell this turn." },
+          { "level": 13, "name": "Versatile Trickster", "description": "You gain the ability to distract targets with your Mage Hand. As a Bonus Action on your turn, you can designate a creature within 5 feet of the spectral hand created by the spell." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Sorcerer",
+    "hitDie": 6,
+    "description": "A spellcaster who draws on inherent magic from a gift or bloodline.",
+    "primaryAbility": "Charisma",
+    "savingThrows": ["Constitution", "Charisma"],
+    "armorProfs": [],
+    "weaponProfs": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light crossbows"],
+    "toolProfs": [],
+    "skillChoices": 2,
+    "skillOptions": ["Arcana", "Deception", "Insight", "Intimidation", "Persuasion", "Religion"],
+    "subclassLevel": 1,
+    "subclassLabel": "Sorcerous Origin",
+    "spellcasting": {
+      "ability": "Charisma",
+      "slots": [
+        [2,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,1],
+        [4,3,3,3,3,1,1,1,1],
+        [4,3,3,3,3,2,1,1,1],
+        [4,3,3,3,3,2,2,1,1]
+      ]
+    },
+    "features": [
+      { "level": 1, "name": "Sorcerous Origin", "description": "Choose a sorcerous origin, which describes the source of your innate magical power." },
+      { "level": 1, "name": "Spellcasting", "description": "An event in your past, or in the life of a parent or ancestor, left an indelible mark on you, infusing you with arcane magic. You use Charisma as your spellcasting ability." },
+      { "level": 2, "name": "Font of Magic", "description": "You tap into a deep wellspring of magic within yourself. This wellspring is represented by sorcery points, which allow you to create a variety of magical effects." },
+      { "level": 2, "name": "Flexible Casting", "description": "You can use your sorcery points to gain additional spell slots, or sacrifice spell slots to gain additional sorcery points." },
+      { "level": 3, "name": "Metamagic", "description": "You gain the ability to twist your spells to suit your needs. You gain two Metamagic options of your choice." },
+      { "level": 4, "name": "Ability Score Improvement", "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify." },
+      { "level": 20, "name": "Sorcerous Restoration", "description": "You regain 4 expended sorcery points whenever you finish a Short Rest." }
+    ],
+    "subclasses": [
+      {
+        "name": "Draconic Bloodline",
+        "description": "Your innate magic comes from draconic magic that was mingled with your blood or that of your ancestors.",
+        "features": [
+          { "level": 1, "name": "Dragon Ancestor", "description": "You choose one type of dragon as your ancestor. The damage type associated with each dragon is used by features you gain later." },
+          { "level": 1, "name": "Draconic Resilience", "description": "As magic flows through your body, it causes physical traits of your dragon ancestors to emerge. Your hit point maximum increases by 1 and increases by 1 again whenever you gain a level in this class. Additionally, parts of your skin are covered by a thin sheen of dragon-like scales. When you aren't wearing armor, your AC equals 13 + your Dexterity modifier." },
+          { "level": 6, "name": "Elemental Affinity", "description": "When you cast a spell that deals damage of the type associated with your draconic ancestry, you can add your Charisma modifier to one damage roll of that spell." },
+          { "level": 14, "name": "Dragon Wings", "description": "You gain the ability to sprout a pair of dragon wings from your back, gaining a flying speed equal to your current speed." }
+        ]
+      },
+      {
+        "name": "Wild Magic",
+        "description": "Your innate magic comes from the wild forces of chaos that underlie the order of creation.",
+        "features": [
+          { "level": 1, "name": "Wild Magic Surge", "description": "Your spellcasting can unleash surges of untamed magic. Immediately after you cast a sorcerer spell of 1st level or higher, the DM can have you roll a d20. If you roll a 1, roll on the Wild Magic Surge table to create a random magical effect." },
+          { "level": 1, "name": "Tides of Chaos", "description": "You can manipulate the forces of chance and chaos to gain Advantage on one attack roll, ability check, or saving throw. Once you do so, you must finish a long rest before you can use this feature again." },
+          { "level": 6, "name": "Bend Luck", "description": "You have the ability to twist fate using your wild magic. When another creature you can see makes an attack roll, an ability check, or a saving throw, you can use your Reaction and spend 2 sorcery points to roll 1d4 and apply the number rolled as a bonus or penalty (your choice) to the creature's roll." },
+          { "level": 14, "name": "Controlled Chaos", "description": "You gain a modicum of control over the surges of your wild magic. Whenever you roll on the Wild Magic Surge table, you can roll twice and use either number." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Warlock",
+    "hitDie": 8,
+    "description": "A wielder of magic that is derived from a bargain with an extraplanar entity.",
+    "primaryAbility": "Charisma",
+    "savingThrows": ["Wisdom", "Charisma"],
+    "armorProfs": ["Light armor"],
+    "weaponProfs": ["Simple weapons"],
+    "toolProfs": [],
+    "skillChoices": 2,
+    "skillOptions": ["Arcana", "Deception", "History", "Intimidation", "Investigation", "Nature", "Religion"],
+    "subclassLevel": 1,
+    "subclassLabel": "Otherworldly Patron",
+    "spellcasting": {
+      "ability": "Charisma",
+      "slots": [
+        [1,0,0,0,0,0,0,0,0],
+        [2,0,0,0,0,0,0,0,0],
+        [0,2,0,0,0,0,0,0,0],
+        [0,2,0,0,0,0,0,0,0],
+        [0,0,2,0,0,0,0,0,0],
+        [0,0,2,0,0,0,0,0,0],
+        [0,0,0,2,0,0,0,0,0],
+        [0,0,0,2,0,0,0,0,0],
+        [0,0,0,0,2,0,0,0,0],
+        [0,0,0,0,2,0,0,0,0],
+        [0,0,0,0,3,0,0,0,0],
+        [0,0,0,0,3,0,0,0,0],
+        [0,0,0,0,3,0,0,0,0],
+        [0,0,0,0,3,0,0,0,0],
+        [0,0,0,0,3,0,0,0,0],
+        [0,0,0,0,3,0,0,0,0],
+        [0,0,0,0,4,0,0,0,0],
+        [0,0,0,0,4,0,0,0,0],
+        [0,0,0,0,4,0,0,0,0],
+        [0,0,0,0,4,0,0,0,0]
+      ]
+    },
+    "features": [
+      { "level": 1, "name": "Otherworldly Patron", "description": "You have struck a bargain with an otherworldly being of your choice: the Archfey, the Fiend, or the Great Old One, each of which is detailed at the end of the class description." },
+      { "level": 1, "name": "Pact Magic", "description": "Your arcane research and the magic bestowed on you by your patron have given you facility with spells. You use Charisma as your spellcasting ability. Warlock spell slots are regained on a Short Rest." },
+      { "level": 2, "name": "Eldritch Invocations", "description": "In your study of occult lore, you have unearthed eldritch invocations, fragments of forbidden knowledge that imbue you with an abiding magical ability." },
+      { "level": 3, "name": "Pact Boon", "description": "Your otherworldly patron bestows a gift upon you for your loyal service. You gain one of the following features of your choice: Pact of the Chain, Pact of the Blade, or Pact of the Tome." },
+      { "level": 4, "name": "Ability Score Improvement", "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify." },
+      { "level": 11, "name": "Mystic Arcanum", "description": "Your patron bestows upon you a magical secret called an arcanum. Choose one 6th-level spell from the warlock spell list as this arcanum." },
+      { "level": 20, "name": "Eldritch Master", "description": "You can draw on your inner reserve of mystical power while entreating your patron to regain expended spell slots. You can spend 1 minute entreating your patron for aid to regain all your expended spell slots from your Pact Magic feature." }
+    ],
+    "subclasses": [
+      {
+        "name": "The Fiend",
+        "description": "You have made a pact with a fiend from the lower planes of existence, a being whose aims are evil, even if you strive against those aims.",
+        "features": [
+          { "level": 1, "name": "Expanded Spell List", "description": "The Fiend lets you choose from an expanded list of spells when you learn a warlock spell: Burning Hands, Command, Blindness/Deafness, Scorching Ray, Fireball, Stinking Cloud, Fire Shield, Wall of Fire, Flame Strike, Hallow." },
+          { "level": 1, "name": "Dark One's Blessing", "description": "Starting at 1st level, when you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your warlock level (minimum of 1)." },
+          { "level": 6, "name": "Dark One's Own Luck", "description": "Starting at 6th level, you can call on your patron to alter fate in your favor. When you make an ability check or a saving throw, you can use this feature to add a d10 to your roll." },
+          { "level": 10, "name": "Fiendish Resilience", "description": "Starting at 10th level, you can choose one damage type when you finish a short or long rest. You gain resistance to that damage type until you choose a different one with this feature." }
+        ]
+      },
+      {
+        "name": "The Great Old One",
+        "description": "Your patron is a mysterious entity whose nature is utterly foreign to the fabric of reality.",
+        "features": [
+          { "level": 1, "name": "Expanded Spell List", "description": "The Great Old One lets you choose from an expanded list of spells: Dissonant Whispers, Tashas Hideous Laughter, Detect Thoughts, Phantasmal Force, Clairvoyance, Sending, Dominate Beast, Evard's Black Tentacles, Dominate Person, Telekinesis." },
+          { "level": 1, "name": "Awakened Mind", "description": "Starting at 1st level, your alien knowledge gives you the ability to touch the minds of other creatures. You can communicate telepathically with any creature you can see within 30 feet of you." },
+          { "level": 6, "name": "Entropic Ward", "description": "At 6th level, you learn to magically ward yourself against attack and to turn an enemy's failed strike into good luck for yourself." },
+          { "level": 10, "name": "Thought Shield", "description": "Starting at 10th level, your thoughts can't be read by telepathy or other means unless you allow it." }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Wizard",
+    "hitDie": 6,
+    "description": "A scholarly magic-user capable of manipulating the structures of reality.",
+    "primaryAbility": "Intelligence",
+    "savingThrows": ["Intelligence", "Wisdom"],
+    "armorProfs": [],
+    "weaponProfs": ["Daggers", "Darts", "Slings", "Quarterstaffs", "Light crossbows"],
+    "toolProfs": [],
+    "skillChoices": 2,
+    "skillOptions": ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"],
+    "subclassLevel": 2,
+    "subclassLabel": "Arcane Tradition",
+    "spellcasting": {
+      "ability": "Intelligence",
+      "slots": [
+        [2,0,0,0,0,0,0,0,0],
+        [3,0,0,0,0,0,0,0,0],
+        [4,2,0,0,0,0,0,0,0],
+        [4,3,0,0,0,0,0,0,0],
+        [4,3,2,0,0,0,0,0,0],
+        [4,3,3,0,0,0,0,0,0],
+        [4,3,3,1,0,0,0,0,0],
+        [4,3,3,2,0,0,0,0,0],
+        [4,3,3,3,1,0,0,0,0],
+        [4,3,3,3,2,0,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,0,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,0,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,0],
+        [4,3,3,3,2,1,1,1,1],
+        [4,3,3,3,3,1,1,1,1],
+        [4,3,3,3,3,2,1,1,1],
+        [4,3,3,3,3,2,2,1,1]
+      ]
+    },
+    "features": [
+      { "level": 1, "name": "Arcane Recovery", "description": "You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a Short Rest, you can choose expended spell slots to recover." },
+      { "level": 1, "name": "Spellcasting", "description": "As a student of arcane magic, you have a spellbook containing spells that show the first glimmerings of your true power. You use Intelligence as your spellcasting ability." },
+      { "level": 2, "name": "Arcane Tradition", "description": "When you reach 2nd level, you choose an arcane tradition, shaping your practice of magic through one of eight schools." },
+      { "level": 4, "name": "Ability Score Improvement", "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify." },
+      { "level": 18, "name": "Spell Mastery", "description": "You have achieved such mastery over certain spells that you can cast them at will. Choose a 1st-level wizard spell and a 2nd-level wizard spell that are in your spellbook. You can cast those spells at their lowest level without expending a spell slot when you have them prepared." },
+      { "level": 20, "name": "Signature Spells", "description": "You gain mastery over two powerful spells and can cast them with little effort. Choose two 3rd-level wizard spells in your spellbook as your signature spells." }
+    ],
+    "subclasses": [
+      {
+        "name": "School of Evocation",
+        "description": "You focus your study on magic that creates powerful elemental effects such as bitter cold, searing flame, rolling thunder, crackling lightning, and burning acid.",
+        "features": [
+          { "level": 2, "name": "Evocation Savant", "description": "The gold and time you must spend to copy an Evocation spell into your spellbook is halved." },
+          { "level": 2, "name": "Sculpt Spells", "description": "You can create pockets of relative safety within the effects of your evocation spells. When you cast an evocation spell that affects other creatures that you can see, you can choose a number of them equal to 1 + the spell's level. The chosen creatures automatically succeed on their saving throws against the spell, and they take no damage if they would normally take half damage on a successful save." },
+          { "level": 6, "name": "Potent Cantrip", "description": "Your damaging cantrips affect even creatures that avoid the brunt of the effect. When a creature succeeds on a saving throw against your cantrip, the creature takes half the cantrip's damage (if any) but suffers no additional effect from the cantrip." },
+          { "level": 10, "name": "Empowered Evocation", "description": "Beginning at 10th level, you can add your Intelligence modifier to one damage roll of any wizard evocation spell you cast." }
+        ]
+      },
+      {
+        "name": "School of Abjuration",
+        "description": "The School of Abjuration emphasizes magic that blocks, banishes, or protects.",
+        "features": [
+          { "level": 2, "name": "Abjuration Savant", "description": "The gold and time you must spend to copy an Abjuration spell into your spellbook is halved." },
+          { "level": 2, "name": "Arcane Ward", "description": "You can weave magic around yourself for protection. When you cast an abjuration spell of 1st level or higher, you can simultaneously use a strand of the spell's magic to create a magical ward on yourself that lasts until you finish a long rest." },
+          { "level": 6, "name": "Projected Ward", "description": "When a creature that you can see within 30 feet of you takes damage, you can use your Reaction to cause your Arcane Ward to absorb that damage." },
+          { "level": 10, "name": "Improved Abjuration", "description": "When you cast an abjuration spell that requires you to make an ability check as a part of casting that spell, you add your proficiency bonus to that ability check." }
+        ]
+      }
+    ]
+  }
+]

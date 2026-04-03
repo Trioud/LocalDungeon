@@ -1,0 +1,116 @@
+[
+  {
+    "name": "Common",
+    "type": "Standard",
+    "script": "Common",
+    "speakers": "Humans and others throughout the multiverse"
+  },
+  {
+    "name": "Common Sign Language",
+    "type": "Standard",
+    "script": "None",
+    "speakers": "Those who use sign language across the multiverse"
+  },
+  {
+    "name": "Draconic",
+    "type": "Standard",
+    "script": "Draconic",
+    "speakers": "Dragons and dragonborn"
+  },
+  {
+    "name": "Dwarvish",
+    "type": "Standard",
+    "script": "Dwarvish",
+    "speakers": "Dwarves"
+  },
+  {
+    "name": "Elvish",
+    "type": "Standard",
+    "script": "Elvish",
+    "speakers": "Elves"
+  },
+  {
+    "name": "Giant",
+    "type": "Standard",
+    "script": "Dwarvish",
+    "speakers": "Giants and goliaths"
+  },
+  {
+    "name": "Gnomish",
+    "type": "Standard",
+    "script": "Dwarvish",
+    "speakers": "Gnomes"
+  },
+  {
+    "name": "Goblin",
+    "type": "Standard",
+    "script": "Dwarvish",
+    "speakers": "Goblinoids"
+  },
+  {
+    "name": "Halfling",
+    "type": "Standard",
+    "script": "Common",
+    "speakers": "Halflings"
+  },
+  {
+    "name": "Orc",
+    "type": "Standard",
+    "script": "Dwarvish",
+    "speakers": "Orcs"
+  },
+  {
+    "name": "Abyssal",
+    "type": "Rare",
+    "script": "Infernal",
+    "speakers": "Demons of the Abyss"
+  },
+  {
+    "name": "Celestial",
+    "type": "Rare",
+    "script": "Celestial",
+    "speakers": "Celestials"
+  },
+  {
+    "name": "Deep Speech",
+    "type": "Rare",
+    "script": "None",
+    "speakers": "Aberrations"
+  },
+  {
+    "name": "Druidic",
+    "type": "Rare",
+    "script": "Druidic",
+    "speakers": "Druidic circles (secret language)"
+  },
+  {
+    "name": "Infernal",
+    "type": "Rare",
+    "script": "Infernal",
+    "speakers": "Devils of the Nine Hells"
+  },
+  {
+    "name": "Primordial",
+    "type": "Rare",
+    "script": "Dwarvish",
+    "speakers": "Elementals (includes Aquan, Auran, Ignan, and Terran dialects)"
+  },
+  {
+    "name": "Sylvan",
+    "type": "Rare",
+    "script": "Elvish",
+    "speakers": "Fey creatures of the Feywild"
+  },
+  {
+    "name": "Thieves' Cant",
+    "type": "Rare",
+    "script": "None",
+    "speakers": "Various criminal guilds (secret language)"
+  },
+  {
+    "name": "Undercommon",
+    "type": "Rare",
+    "script": "Elvish",
+    "speakers": "Inhabitants of the Underdark"
+  }
+]

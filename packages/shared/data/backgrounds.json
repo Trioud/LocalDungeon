@@ -1,0 +1,226 @@
+[
+  {
+    "name": "Acolyte",
+    "description": "You devoted yourself to service in a temple, either serving a god or serving a religious order. You learned the fundamentals of spellwork and the proper way to conduct rituals.",
+    "abilityScores": {"options": ["Intelligence", "Wisdom", "Charisma"], "choose": 3},
+    "skillProficiencies": ["Insight", "Religion"],
+    "toolProficiencies": ["Calligrapher's Supplies"],
+    "languages": 2,
+    "equipment": ["Book (prayers)", "Calligrapher's Supplies", "Holy Symbol", "Parchment (10 sheets)", "Robe", "8 GP"],
+    "originFeat": "Magic Initiate (Cleric)",
+    "feature": {
+      "name": "Shelter of the Faithful",
+      "description": "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your companions can receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle."
+    }
+  },
+  {
+    "name": "Artisan",
+    "description": "You learned a craft while serving as an apprentice to a seasoned artisan. Honing your skills as a craftsperson, you developed a keen eye for quality and a desire to create lasting things.",
+    "abilityScores": {"options": ["Strength", "Dexterity", "Intelligence"], "choose": 3},
+    "skillProficiencies": ["Investigation", "Persuasion"],
+    "toolProficiencies": ["Artisan's Tools (choose one)"],
+    "languages": 0,
+    "equipment": ["Artisan's Tools (same as above)", "Fine Clothes", "Pouch", "50 GP"],
+    "originFeat": "Crafter",
+    "feature": {
+      "name": "Respect of the Stout Folk",
+      "description": "As an artisan, you are respected among other artisans and can receive free lodging and food in a modest inn or village for yourself and your companions when you stay with fellow craftspeople. This lodging is not lavish, but it is secure."
+    }
+  },
+  {
+    "name": "Charlatan",
+    "description": "You learned the art of deception. You know how to speak with false confidence, use disguises, and take advantage of others. You lived by your wits, always one step ahead of those who wished to catch you.",
+    "abilityScores": {"options": ["Dexterity", "Constitution", "Charisma"], "choose": 3},
+    "skillProficiencies": ["Deception", "Sleight of Hand"],
+    "toolProficiencies": ["Forgery Kit"],
+    "languages": 0,
+    "equipment": ["Forgery Kit", "Costume", "Fine Clothes", "15 GP"],
+    "originFeat": "Skilled",
+    "feature": {
+      "name": "False Identity",
+      "description": "You have a false identity, complete with documentation, established acquaintances, and disguises that let you assume that persona. In addition, you can forge documents, including official papers and personal letters, as long as you have seen an example of the kind of document or the handwriting you are trying to copy."
+    }
+  },
+  {
+    "name": "Criminal",
+    "description": "You learned to survive by any means necessary. Whether in service to a thieves' guild or acting on your own, you committed crimes before becoming an adventurer. Despite a criminal past, you may now seek to use your skills for a more noble purpose.",
+    "abilityScores": {"options": ["Dexterity", "Constitution", "Intelligence"], "choose": 3},
+    "skillProficiencies": ["Deception", "Stealth"],
+    "toolProficiencies": ["Thieves' Tools"],
+    "languages": 0,
+    "equipment": ["Thieves' Tools", "Crowbar", "Dark Clothes with Hood", "15 GP"],
+    "originFeat": "Alert",
+    "feature": {
+      "name": "Criminal Contact",
+      "description": "You have a reliable and trustworthy contact who acts as your liaison to a network of other criminals. You know how to get messages to and from your contact, even over great distances; specifically, you know the local messengers, corrupt caravan masters, and seedy sailors who can deliver messages for you."
+    }
+  },
+  {
+    "name": "Entertainer",
+    "description": "You thrived in front of an audience. You know how to entrance them, entertain them, and even inspire them. Your poised confidence and understanding of performance made you the center of attention wherever you performed.",
+    "abilityScores": {"options": ["Strength", "Dexterity", "Charisma"], "choose": 3},
+    "skillProficiencies": ["Acrobatics", "Performance"],
+    "toolProficiencies": ["Musical Instrument (choose one)"],
+    "languages": 0,
+    "equipment": ["Musical Instrument (same as above)", "Costume", "Mirror", "Perfume", "15 GP"],
+    "originFeat": "Musician",
+    "feature": {
+      "name": "By Popular Demand",
+      "description": "You can always find a place to perform, usually in an inn or tavern but possibly with a circus, at a theater, or even in a noble's court. At such a place, you receive free lodging and food of a modest standard as long as you perform each night. In addition, your performance makes you something of a local figure. When strangers recognize you in a town where you have performed, they typically take a liking to you."
+    }
+  },
+  {
+    "name": "Farmer",
+    "description": "You grew up close to the land. You know the rhythms of the seasons, the labor of growing food, and the satisfaction of providing for your community. Hard work and a steady hand define your character.",
+    "abilityScores": {"options": ["Strength", "Constitution", "Wisdom"], "choose": 3},
+    "skillProficiencies": ["Animal Handling", "Nature"],
+    "toolProficiencies": ["Carpenter's Tools"],
+    "languages": 0,
+    "equipment": ["Carpenter's Tools", "Healer's Kit", "Iron Pot", "Shovel", "30 GP"],
+    "originFeat": "Tough",
+    "feature": {
+      "name": "Harvester",
+      "description": "You know how to find food and water in the wild and how to care for farm animals. When you forage, you find twice as much food as you normally would. Additionally, you can tend to the wounds of animals, using your Wisdom (Medicine) skill."
+    }
+  },
+  {
+    "name": "Guard",
+    "description": "Your training focused on keeping the peace. Whether in service to a city watch, a noble house, or a merchant guild, you kept your eyes open and your sword arm ready, protecting people from harm.",
+    "abilityScores": {"options": ["Strength", "Intelligence", "Wisdom"], "choose": 3},
+    "skillProficiencies": ["Athletics", "Perception"],
+    "toolProficiencies": ["Gaming Set (choose one)"],
+    "languages": 0,
+    "equipment": ["Gaming Set (same as above)", "Hooded Lantern", "Manacles", "Quaterstaff", "15 GP"],
+    "originFeat": "Alert",
+    "feature": {
+      "name": "Watcher's Eye",
+      "description": "Your experience in enforcing the law, and dealing with lawbreakers, gives you a feel for local laws and criminals. You can easily find the local outpost of the watch or a similar organization, and just as easily pick out the dens of criminal activity in a community, though you're more likely to be welcome in the former locations rather than the latter."
+    }
+  },
+  {
+    "name": "Guide",
+    "description": "You grew up in the wilderness, learning the ways of the land, becoming adept at navigating through difficult terrain, and learning to survive in hostile environments. Your keen awareness and survival skills served you—and others—well.",
+    "abilityScores": {"options": ["Dexterity", "Constitution", "Wisdom"], "choose": 3},
+    "skillProficiencies": ["Stealth", "Survival"],
+    "toolProficiencies": ["Cartographer's Tools"],
+    "languages": 0,
+    "equipment": ["Cartographer's Tools", "Bedroll", "Crampons", "50 Feet of Hempen Rope", "Tinderbox", "Torch (10)", "Traveler's Clothes", "15 GP"],
+    "originFeat": "Magic Initiate (Druid)",
+    "feature": {
+      "name": "Wanderer",
+      "description": "You have an excellent memory for maps and geography, and you can always recall the general layout of terrain, settlements, and other features around you. In addition, you can find food and fresh water for yourself and up to five other people each day, provided that the land offers berries, small game, water, and so forth."
+    }
+  },
+  {
+    "name": "Hermit",
+    "description": "You lived in seclusion, either in a sheltered community such as a monastery, or entirely alone, for a formative part of your life. In your time apart from the clamor of society, you found quiet, solitude, and perhaps some of the answers you were looking for.",
+    "abilityScores": {"options": ["Constitution", "Wisdom", "Charisma"], "choose": 3},
+    "skillProficiencies": ["Medicine", "Religion"],
+    "toolProficiencies": ["Herbalism Kit"],
+    "languages": 1,
+    "equipment": ["Herbalism Kit", "Blanket", "Book (notes)", "Lamp", "Oil (7 flasks)", "Traveler's Clothes", "15 GP"],
+    "originFeat": "Magic Initiate (Druid)",
+    "feature": {
+      "name": "Discovery",
+      "description": "The quiet seclusion of your extended hermitage gave you access to a unique and powerful discovery. The exact nature of this revelation depends on the nature of your seclusion. It might be a great truth about the cosmos, the deities, the powerful beings of the outer planes, or the forces of nature."
+    }
+  },
+  {
+    "name": "Merchant",
+    "description": "You worked for a merchant—perhaps a traveling trader, a shopkeeper, or a merchant prince. You learned the ways of commerce, how to find the best deals, and how to talk your way past a stubborn gatekeeper.",
+    "abilityScores": {"options": ["Constitution", "Intelligence", "Charisma"], "choose": 3},
+    "skillProficiencies": ["Animal Handling", "Persuasion"],
+    "toolProficiencies": ["Navigator's Tools"],
+    "languages": 1,
+    "equipment": ["Navigator's Tools", "Fine Clothes", "Letter of Introduction from your Trade Guild", "20 GP"],
+    "originFeat": "Lucky",
+    "feature": {
+      "name": "Guild Membership",
+      "description": "As an established and respected member of a guild, you can rely on certain benefits that membership provides. Your fellow guild members will provide you with lodging and food if necessary, and pay for your funeral if needed. In some cities and towns, a guild has a stronghold or meeting place."
+    }
+  },
+  {
+    "name": "Noble",
+    "description": "You were born into privilege. Your family has wealth, power, and a title. Your upbringing gave you an air of expectation, and others are inclined to defer to you based on your background alone.",
+    "abilityScores": {"options": ["Strength", "Intelligence", "Charisma"], "choose": 3},
+    "skillProficiencies": ["History", "Persuasion"],
+    "toolProficiencies": ["Gaming Set (choose one)"],
+    "languages": 1,
+    "equipment": ["Gaming Set (same as above)", "Fine Clothes", "Purse", "Signet Ring", "25 GP"],
+    "originFeat": "Skilled",
+    "feature": {
+      "name": "Position of Privilege",
+      "description": "Thanks to your noble birth, people are inclined to think the best of you. You are welcome in high society, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure, and other people of high birth treat you as a member of the same social sphere."
+    }
+  },
+  {
+    "name": "Sage",
+    "description": "You spent years learning the lore of the multiverse. You scoured manuscripts, studied scrolls, and listened to the greatest experts on the subjects that interest you. Your efforts have made you a master researcher.",
+    "abilityScores": {"options": ["Constitution", "Intelligence", "Wisdom"], "choose": 3},
+    "skillProficiencies": ["Arcana", "History"],
+    "toolProficiencies": ["Calligrapher's Supplies"],
+    "languages": 2,
+    "equipment": ["Calligrapher's Supplies", "Book (notes on area of study)", "Ink", "Ink Pen", "Parchment (10 sheets)", "8 GP"],
+    "originFeat": "Magic Initiate (Wizard)",
+    "feature": {
+      "name": "Researcher",
+      "description": "When you attempt to learn or recall a piece of lore, if you do not know that information, you often know where and from whom you can obtain it. Usually, this information comes from a library, scriptorium, university, or a sage or other learned person. Your DM might rule that the knowledge you seek is secreted away in an almost inaccessible place, or that it simply cannot be found."
+    }
+  },
+  {
+    "name": "Sailor",
+    "description": "You sailed on a seagoing vessel for years. In that time, you faced storms, pirates, and the supernatural. Your first love is the sea, but you now seek adventure in other places.",
+    "abilityScores": {"options": ["Strength", "Dexterity", "Wisdom"], "choose": 3},
+    "skillProficiencies": ["Acrobatics", "Perception"],
+    "toolProficiencies": ["Navigator's Tools"],
+    "languages": 0,
+    "equipment": ["Navigator's Tools", "Belaying Pin (Club)", "Dagger", "Silk Rope (50 feet)", "Traveler's Clothes", "10 GP"],
+    "originFeat": "Tavern Brawler",
+    "feature": {
+      "name": "Ship's Passage",
+      "description": "When you need to, you can secure free passage on a sailing ship for yourself and your adventuring companions. You might sail on the ship you served on, or another ship you have good relations with (perhaps one captained by a former crewmate). Because you're calling in a favor, you can't be certain of a schedule or route that will meet your every need."
+    }
+  },
+  {
+    "name": "Scribe",
+    "description": "You spent much of your life in a scriptorium, crafting careful copies of documents and tomes. You mastered penmanship, learned the ways of bureaucracy, and perhaps even learned a few secrets from the documents you reproduced.",
+    "abilityScores": {"options": ["Dexterity", "Intelligence", "Wisdom"], "choose": 3},
+    "skillProficiencies": ["Investigation", "Perception"],
+    "toolProficiencies": ["Calligrapher's Supplies"],
+    "languages": 2,
+    "equipment": ["Calligrapher's Supplies", "Fine Clothes", "Lamp", "Oil (3 flasks)", "Parchment (20 sheets)", "10 GP"],
+    "originFeat": "Skilled",
+    "feature": {
+      "name": "Fast Writer",
+      "description": "You are an experienced scribe. You write at three times the normal rate and can take notes on conversations or events as they happen without disrupting your participation in them. You can also draft legal documents, merchant contracts, and similar papers."
+    }
+  },
+  {
+    "name": "Soldier",
+    "description": "You trained for years in the military or militia, learning to fight in formation and hold your ground against overwhelming odds. Your discipline, physical prowess, and familiarity with weapons and armor serve you well as an adventurer.",
+    "abilityScores": {"options": ["Strength", "Dexterity", "Constitution"], "choose": 3},
+    "skillProficiencies": ["Athletics", "Intimidation"],
+    "toolProficiencies": ["Gaming Set (choose one)"],
+    "languages": 0,
+    "equipment": ["Gaming Set (same as above)", "Healer's Kit", "Quaterstaff", "Traveler's Clothes", "15 GP"],
+    "originFeat": "Savage Attacker",
+    "feature": {
+      "name": "Military Rank",
+      "description": "You have a military rank from your career as a soldier. Soldiers loyal to your former military organization still recognize your authority and influence, and they defer to you if they are of a lower rank. You can invoke your rank to exert influence over other soldiers and requisition simple equipment or horses for temporary use."
+    }
+  },
+  {
+    "name": "Wayfarer",
+    "description": "You grew up on the road, or else you were thrust into it at an early age, taking odd jobs for food and shelter. You know how to get by with little, and you've developed connections in many cities and towns.",
+    "abilityScores": {"options": ["Dexterity", "Wisdom", "Charisma"], "choose": 3},
+    "skillProficiencies": ["Insight", "Stealth"],
+    "toolProficiencies": ["Thieves' Tools"],
+    "languages": 0,
+    "equipment": ["Thieves' Tools", "Bedroll", "Crampons", "Dagger (2)", "Letter of Introduction", "Traveler's Clothes", "16 GP"],
+    "originFeat": "Lucky",
+    "feature": {
+      "name": "City Secrets",
+      "description": "You know the secret patterns and flow to cities and can find passages through the urban sprawl that others would miss. When you are not in combat, you (and companions you lead) can travel between any two locations in the city twice as fast as your speed would normally allow."
+    }
+  }
+]
