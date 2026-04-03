@@ -5,9 +5,13 @@ import { PrismaUserRepository } from './repositories/PrismaUserRepository.js';
 import { PrismaGameDataRepository } from './repositories/PrismaGameDataRepository.js';
 import { PrismaCharacterRepository } from './repositories/PrismaCharacterRepository.js';
 import { RedisSessionStateStore } from './repositories/RedisSessionStateStore.js';
+import { PrismaSessionRepository } from './repositories/PrismaSessionRepository.js';
+import { PrismaGameEventRepository } from './repositories/PrismaGameEventRepository.js';
+import { RedisSessionStore } from './repositories/RedisSessionStore.js';
 import { AuthService } from './services/AuthService.js';
 import { GameDataService } from './services/GameDataService.js';
 import { CharacterService } from './services/CharacterService.js';
+import { SessionService } from './services/SessionService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -30,6 +34,10 @@ export function buildContainer(env: Env) {
     gameDataService: asClass(GameDataService).scoped(),
     characterRepository: asClass(PrismaCharacterRepository).scoped(),
     characterService: asClass(CharacterService).scoped(),
+    sessionRepository: asClass(PrismaSessionRepository).scoped(),
+    gameEventRepository: asClass(PrismaGameEventRepository).scoped(),
+    redisSessionStore: asClass(RedisSessionStore).scoped(),
+    sessionService: asClass(SessionService).scoped(),
   });
 
   return container;

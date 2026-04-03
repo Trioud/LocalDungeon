@@ -8,13 +8,15 @@ datasource db {
 }
 
 model User {
-  id           String      @id @default(cuid())
-  username     String      @unique
-  email        String      @unique
-  passwordHash String      @map("password_hash")
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @updatedAt @map("updated_at")
-  characters   Character[]
+  id              String          @id @default(cuid())
+  username        String          @unique
+  email           String          @unique
+  passwordHash    String          @map("password_hash")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  characters      Character[]
+  createdSessions Session[]       @relation("CreatedSessions")
+  sessionPlayers  SessionPlayer[] @relation("SessionPlayers")
 
   @@map("users")
 }
@@ -168,6 +170,51 @@ model Language {
   @@map("languages")
 }
 
+model Session {
+  id          String          @id @default(cuid())
+  name        String
+  inviteCode  String          @unique @map("invite_code")
+  createdById String          @map("created_by_id")
+  createdBy   User            @relation("CreatedSessions", fields: [createdById], references: [id])
+  maxPlayers  Int             @default(6) @map("max_players")
+  status      String          @default("lobby") // lobby | active | ended
+  phase       String          @default("exploration") // exploration | social | combat
+  players     SessionPlayer[]
+  events      GameEvent[]
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  @@map("sessions")
+}
+
+model SessionPlayer {
+  id          String    @id @default(cuid())
+  sessionId   String    @map("session_id")
+  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId      String    @map("user_id")
+  user        User      @relation("SessionPlayers", fields: [userId], references: [id])
+  characterId String    @map("character_id")
+  character   Character @relation(fields: [characterId], references: [id])
+  isReady     Boolean   @default(false) @map("is_ready")
+  isConnected Boolean   @default(false) @map("is_connected")
+  joinedAt    DateTime  @default(now()) @map("joined_at")
+
+  @@unique([sessionId, userId])
+  @@map("session_players")
+}
+
+model GameEvent {
+  id        String   @id @default(cuid())
+  sessionId String   @map("session_id")
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id")
+  type      String   // "dice_roll" | "chat" | "combat_action" | "hp_change" | "condition_change"
+  payload   Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("game_events")
+}
+
 model Character {
   id           String   @id @default(cuid())
   userId       String   @map("user_id")
@@ -207,6 +254,7 @@ model Character {
   portraitUrl    String? @map("portrait_url")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
+  sessionPlayers SessionPlayer[]
 
   @@map("characters")
 }

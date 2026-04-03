@@ -23,6 +23,7 @@
     "@fastify/cors": "^11.2.0",
     "@fastify/rate-limit": "^10.3.0",
     "@local-dungeon/shared": "workspace:*",
+    "@socket.io/redis-adapter": "^8.3.0",
     "awilix": "^10.0.0",
     "bcrypt": "^5.1.1",
     "fastify": "^5.0.0",
@@ -30,6 +31,7 @@
     "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
     "pino": "^9.0.0",
+    "socket.io": "^4.8.3",
     "zod": "^3.23.0"
   },
   "devDependencies": {
@@ -39,6 +41,7 @@
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^2.0.0",
     "prisma": "^5.16.0",
+    "socket.io-client": "^4.8.3",
     "tsx": "^4.15.0",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0"
