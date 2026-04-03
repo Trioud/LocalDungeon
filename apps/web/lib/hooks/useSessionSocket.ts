@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
-import { useSocket } from './useSocket.js';
+import { useSocket } from './useSocket';
 import { useQueryClient } from '@tanstack/react-query';
 
 export function useSessionSocket(sessionId: string) {

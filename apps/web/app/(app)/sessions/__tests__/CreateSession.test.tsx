@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import CreateSessionPage from '../new/page.js';
+import CreateSessionPage from '../new/page';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({

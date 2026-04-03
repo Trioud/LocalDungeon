@@ -75,9 +75,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build shared package
-        run: pnpm --filter @local-dungeon/shared build
-
       - name: Generate Prisma client
         run: pnpm --filter @local-dungeon/api exec prisma generate
         env:
