@@ -1,0 +1,4 @@
+// Shared types, schemas, and utilities for LocalDungeon
+// Used by both apps/api and apps/web
+
+export * from './types/index.js';
