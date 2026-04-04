@@ -74,6 +74,7 @@ const mockCharacter: Character = {
   conditions: [],
   exhaustionLevel: 0,
   isBloodied: false,
+  heroicInspiration: false,
   portraitUrl: null,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -86,6 +87,7 @@ function makeCharacterRepo(overrides: Partial<ICharacterRepository> = {}): IChar
     findAllByUserId: vi.fn().mockResolvedValue([]),
     update: vi.fn().mockResolvedValue(mockCharacter),
     delete: vi.fn().mockResolvedValue(undefined),
+    setInspiration: vi.fn().mockResolvedValue(undefined),
     ...overrides,
   };
 }

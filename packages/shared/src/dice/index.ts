@@ -78,3 +78,33 @@ export function rollDice(notation: DiceNotation, mode: DiceRollMode, rng: () => 
     isCriticalFail: isNatural1,
   };
 }
+
+/**
+ * Re-rolls the die at the given index in an existing DiceResult.
+ * The die sides are inferred from the notation string.
+ * Returns a new DiceResult with the updated roll and recalculated total.
+ */
+export function rerollDie(result: DiceResult, dieIndex: number, rng: () => number = Math.random): DiceResult {
+  const notation = parseNotation(result.notation);
+  if (dieIndex < 0 || dieIndex >= result.rolls.length) {
+    throw new Error(`Die index ${dieIndex} out of range for ${result.rolls.length} dice`);
+  }
+  const newRoll = Math.floor(rng() * notation.sides) + 1;
+  const newRolls = result.rolls.map((r, i) => (i === dieIndex ? newRoll : r));
+  const rollSum = newRolls.reduce((a, b) => a + b, 0);
+  const total = rollSum + result.modifier;
+
+  const isD20 = notation.sides === 20;
+  const highest = Math.max(...newRolls);
+  const lowest = Math.min(...newRolls);
+
+  return {
+    ...result,
+    rolls: newRolls,
+    total,
+    isNatural20: isD20 && highest === 20,
+    isNatural1: isD20 && lowest === 1,
+    isCritical: isD20 && highest === 20,
+    isCriticalFail: isD20 && lowest === 1,
+  };
+}

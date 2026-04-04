@@ -1,20 +1,25 @@
 import {
   rollDice,
   parseNotation,
+  rerollDie,
   type DiceNotation,
   type DiceRollMode,
   type DiceResult,
 } from '@local-dungeon/shared';
+import type { InspirationService } from './InspirationService.js';
 
 interface DiceServiceDeps {
   rng?: () => number;
+  inspirationService?: InspirationService;
 }
 
 export class DiceService {
   private rng: () => number;
+  private inspirationService?: InspirationService;
 
-  constructor({ rng = Math.random }: DiceServiceDeps = {}) {
+  constructor({ rng = Math.random, inspirationService }: DiceServiceDeps = {}) {
     this.rng = rng;
+    this.inspirationService = inspirationService;
   }
 
   roll(notation: DiceNotation, mode: DiceRollMode): DiceResult {
@@ -39,5 +44,17 @@ export class DiceService {
 
   rollHitDie(sides: number, conMod: number): DiceResult {
     return rollDice({ count: 1, sides, modifier: conMod }, 'normal', this.rng);
+  }
+
+  async rerollWithInspiration(
+    characterId: string,
+    originalResult: DiceResult,
+    dieIndex: number,
+  ): Promise<DiceResult> {
+    if (!this.inspirationService) {
+      throw new Error('InspirationService not available');
+    }
+    await this.inspirationService.useInspiration(characterId);
+    return rerollDie(originalResult, dieIndex, this.rng);
   }
 }

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { CharacterService } from '../services/CharacterService.js';
 import type { LevelUpService } from '../services/LevelUpService.js';
 import type { PortraitService } from '../services/PortraitService.js';
+import type { InspirationService } from '../services/InspirationService.js';
 
 const CreateCharacterSchema = z.object({
   name: z.string().min(2).max(50),
@@ -53,6 +54,10 @@ const LevelUpChoiceSchema = z.object({
 
 const LevelUpBodySchema = z.object({
   choice: LevelUpChoiceSchema,
+});
+
+const GiftInspirationSchema = z.object({
+  toCharacterId: z.string(),
 });
 
 export async function characterRoutes(app: FastifyInstance): Promise<void> {
@@ -189,6 +194,40 @@ export async function characterRoutes(app: FastifyInstance): Promise<void> {
       const { id } = request.params as { id: string };
       const svc = request.diScope.resolve<PortraitService>('portraitService');
       await svc.deletePortrait(id, request.user.sub);
+      return reply.code(204).send();
+    }
+  );
+
+  app.post(
+    '/characters/:id/inspiration/grant',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const svc = request.diScope.resolve<InspirationService>('inspirationService');
+      await svc.grantInspiration(id);
+      return reply.code(204).send();
+    }
+  );
+
+  app.post(
+    '/characters/:id/inspiration/use',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const svc = request.diScope.resolve<InspirationService>('inspirationService');
+      await svc.useInspiration(id);
+      return reply.code(204).send();
+    }
+  );
+
+  app.post(
+    '/characters/:id/inspiration/gift',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const { toCharacterId } = GiftInspirationSchema.parse(request.body);
+      const svc = request.diScope.resolve<InspirationService>('inspirationService');
+      await svc.giftInspiration(id, toCharacterId);
       return reply.code(204).send();
     }
   );

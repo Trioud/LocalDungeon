@@ -34,6 +34,7 @@ function mapToCharacter(row: any): Character {
     conditions: row.conditions as unknown[],
     exhaustionLevel: row.exhaustionLevel,
     isBloodied: row.isBloodied,
+    heroicInspiration: row.heroicInspiration ?? false,
     portraitUrl: row.portraitUrl,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -131,5 +132,12 @@ export class PrismaCharacterRepository implements ICharacterRepository {
 
   async delete(id: string): Promise<void> {
     await this.prisma.character.delete({ where: { id } });
+  }
+
+  async setInspiration(id: string, value: boolean): Promise<void> {
+    await this.prisma.character.update({
+      where: { id },
+      data: { heroicInspiration: value },
+    });
   }
 }

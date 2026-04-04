@@ -19,6 +19,7 @@ try {
     spellcastingService: container.cradle.spellcastingService,
     restService: container.cradle.restService,
     classFeatureService: container.cradle.classFeatureService,
+    inspirationService: container.cradle.inspirationService,
   });
   app.log.info(`🎲 LocalDungeon API running on port ${env.PORT}`);
 } catch (err) {

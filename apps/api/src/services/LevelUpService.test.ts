@@ -31,6 +31,7 @@ function makeCharacter(overrides: Partial<Character> = {}): Character {
     conditions: [],
     exhaustionLevel: 0,
     isBloodied: false,
+    heroicInspiration: false,
     portraitUrl: null,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -45,6 +46,7 @@ function makeRepo(character: Character): ICharacterRepository {
     findAllByUserId: vi.fn(),
     update: vi.fn().mockImplementation(async (_id, patch) => ({ ...character, ...patch })),
     delete: vi.fn(),
+    setInspiration: vi.fn().mockResolvedValue(undefined),
   };
 }
 

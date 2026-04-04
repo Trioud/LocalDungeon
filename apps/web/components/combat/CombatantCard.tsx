@@ -1,12 +1,13 @@
 'use client';
 import { useState } from 'react';
-import type { CombatantState, ConditionName, ClassResource } from '@local-dungeon/shared';
+import type { CombatantState, ConditionName, ClassResource, DiceResult } from '@local-dungeon/shared';
 import ConditionBadge from './ConditionBadge';
 import DeathSaveTracker from './DeathSaveTracker';
 import SpellSlotTracker from '../spellcasting/SpellSlotTracker';
 import ConcentrationBadge from '../spellcasting/ConcentrationBadge';
 import QuickUsePanel from '../features/QuickUsePanel';
 import CharacterAvatar from '../portrait/CharacterAvatar';
+import InspirationBadge from '../inspiration/InspirationBadge';
 
 const ALL_CONDITIONS: ConditionName[] = [
   'blinded', 'charmed', 'deafened', 'exhaustion', 'frightened', 'grappled',
@@ -17,6 +18,9 @@ const ALL_CONDITIONS: ConditionName[] = [
 interface CombatantCardProps {
   combatant: CombatantState;
   isActive: boolean;
+  isOwnCombatant?: boolean;
+  lastRoll?: DiceResult;
+  sessionPlayers?: Array<{ id: string; name: string; hasInspiration: boolean }>;
   onDamage: (id: string, amount: number) => void;
   onHeal: (id: string, amount: number) => void;
   onAddCondition: (id: string, condition: ConditionName) => void;
@@ -24,11 +28,16 @@ interface CombatantCardProps {
   onEndConcentration?: (id: string) => void;
   resources?: ClassResource[];
   onUseResource?: (combatantId: string, resourceId: string) => void;
+  onUseInspiration?: (dieIndex: number) => void;
+  onGiftInspiration?: (toCharacterId: string) => void;
 }
 
 export default function CombatantCard({
   combatant,
   isActive,
+  isOwnCombatant = false,
+  lastRoll,
+  sessionPlayers,
   onDamage,
   onHeal,
   onAddCondition,
@@ -36,6 +45,8 @@ export default function CombatantCard({
   onEndConcentration,
   resources,
   onUseResource,
+  onUseInspiration,
+  onGiftInspiration,
 }: CombatantCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [damageInput, setDamageInput] = useState('');
@@ -74,6 +85,15 @@ export default function CombatantCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold text-sm truncate">{combatant.name}</span>
+            <InspirationBadge
+              hasInspiration={combatant.heroicInspiration ?? false}
+              characterName={combatant.name}
+              isOwn={isOwnCombatant}
+              lastRoll={lastRoll}
+              sessionPlayers={sessionPlayers}
+              onUse={onUseInspiration}
+              onGift={onGiftInspiration}
+            />
             {combatant.isBloodied && (
               <span className="text-xs text-red-600 font-medium">🩸 Bloodied</span>
             )}

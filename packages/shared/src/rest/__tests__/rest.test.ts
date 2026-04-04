@@ -171,6 +171,38 @@ describe('applyLongRestFeatures', () => {
   });
 });
 
+describe('applyLongRestFeatures — Human Heroic Inspiration', () => {
+  it('grants heroic inspiration to Human without inspiration', () => {
+    const state = makeCombatant({ race: 'Human', heroicInspiration: false });
+    const result = applyLongRestFeatures(state);
+    expect(result.heroicInspiration).toBe(true);
+  });
+
+  it('does not grant if Human already has inspiration', () => {
+    const state = makeCombatant({ race: 'Human', heroicInspiration: true });
+    const result = applyLongRestFeatures(state);
+    expect(result.heroicInspiration).toBe(true);
+  });
+
+  it('grants inspiration case-insensitively (HUMAN)', () => {
+    const state = makeCombatant({ race: 'HUMAN', heroicInspiration: false });
+    const result = applyLongRestFeatures(state);
+    expect(result.heroicInspiration).toBe(true);
+  });
+
+  it('does not grant heroic inspiration to non-Human race', () => {
+    const state = makeCombatant({ race: 'Elf', heroicInspiration: false });
+    const result = applyLongRestFeatures(state);
+    expect(result.heroicInspiration).toBeFalsy();
+  });
+
+  it('does not grant heroic inspiration when race is undefined', () => {
+    const state = makeCombatant({ heroicInspiration: false });
+    const result = applyLongRestFeatures(state);
+    expect(result.heroicInspiration).toBeFalsy();
+  });
+});
+
 describe('applyShortRestFeatures', () => {
   it('recovers pact magic on short rest', () => {
     const state = makeCombatant({

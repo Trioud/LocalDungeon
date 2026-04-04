@@ -37,6 +37,10 @@ export function applyLongRestFeatures(state: CombatantState): CombatantState {
   updated.deathSaveSuccesses = 0;
   updated.deathSaveFailures = 0;
 
+  if (updated.race?.toLowerCase() === 'human' && !updated.heroicInspiration) {
+    updated.heroicInspiration = true;
+  }
+
   if (updated.spellcasting) {
     updated.spellcasting = recoverSlots(updated.spellcasting, 'long');
   }

@@ -41,6 +41,7 @@ export interface Character extends CreateCharacterData {
   conditions: unknown[];
   exhaustionLevel: number;
   isBloodied: boolean;
+  heroicInspiration: boolean;
   portraitUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -52,4 +53,5 @@ export interface ICharacterRepository {
   findAllByUserId(userId: string): Promise<CharacterSummary[]>;
   update(id: string, patch: UpdateCharacterData): Promise<Character>;
   delete(id: string): Promise<void>;
+  setInspiration(id: string, value: boolean): Promise<void>;
 }

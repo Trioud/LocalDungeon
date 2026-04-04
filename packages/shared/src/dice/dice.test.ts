@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseNotation, rollDice } from './index';
+import { parseNotation, rollDice, rerollDie } from './index';
 
 const fixedRng = () => 0.5; // produces Math.floor(0.5 * sides) + 1
 
@@ -106,5 +106,62 @@ describe('rollDice', () => {
   it('formats negative modifier', () => {
     const result = rollDice({ count: 1, sides: 4, modifier: -1 }, 'normal', fixedRng);
     expect(result.notation).toBe('d4-1');
+  });
+});
+
+describe('rerollDie', () => {
+  it('replaces the die at the given index', () => {
+    const original = rollDice({ count: 3, sides: 6, modifier: 0 }, 'normal', () => 0.5);
+    // all rolls = 4, total = 12
+    expect(original.rolls).toEqual([4, 4, 4]);
+    const rerolled = rerollDie(original, 1, () => 0); // index 1 becomes 1
+    expect(rerolled.rolls[0]).toBe(4);
+    expect(rerolled.rolls[1]).toBe(1);
+    expect(rerolled.rolls[2]).toBe(4);
+  });
+
+  it('recalculates the total after reroll', () => {
+    const original = rollDice({ count: 2, sides: 6, modifier: 3 }, 'normal', () => 0.5);
+    // rolls = [4, 4], total = 11
+    const rerolled = rerollDie(original, 0, () => 0.999); // index 0 becomes 6
+    expect(rerolled.total).toBe(6 + 4 + 3); // 13
+  });
+
+  it('preserves modifier and mode', () => {
+    const original = rollDice({ count: 1, sides: 20, modifier: 5 }, 'normal', () => 0.5);
+    const rerolled = rerollDie(original, 0, () => 0.5);
+    expect(rerolled.modifier).toBe(5);
+    expect(rerolled.mode).toBe('normal');
+  });
+
+  it('detects natural 20 on d20 after reroll', () => {
+    const original = rollDice({ count: 1, sides: 20, modifier: 0 }, 'normal', () => 0.5);
+    expect(original.isNatural20).toBe(false);
+    const rerolled = rerollDie(original, 0, () => 0.999);
+    expect(rerolled.rolls[0]).toBe(20);
+    expect(rerolled.isNatural20).toBe(true);
+    expect(rerolled.isCritical).toBe(true);
+  });
+
+  it('detects natural 1 on d20 after reroll', () => {
+    const original = rollDice({ count: 1, sides: 20, modifier: 0 }, 'normal', () => 0.999);
+    expect(original.isNatural1).toBe(false);
+    const rerolled = rerollDie(original, 0, () => 0);
+    expect(rerolled.rolls[0]).toBe(1);
+    expect(rerolled.isNatural1).toBe(true);
+    expect(rerolled.isCriticalFail).toBe(true);
+  });
+
+  it('throws for out-of-range die index', () => {
+    const original = rollDice({ count: 2, sides: 6, modifier: 0 }, 'normal', () => 0.5);
+    expect(() => rerollDie(original, 5)).toThrow('Die index 5 out of range');
+    expect(() => rerollDie(original, -1)).toThrow('Die index -1 out of range');
+  });
+
+  it('does not mutate the original result', () => {
+    const original = rollDice({ count: 2, sides: 6, modifier: 0 }, 'normal', () => 0.5);
+    const originalRolls = [...original.rolls];
+    rerollDie(original, 0, () => 0.999);
+    expect(original.rolls).toEqual(originalRolls);
   });
 });

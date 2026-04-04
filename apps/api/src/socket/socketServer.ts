@@ -8,7 +8,8 @@ import type { CombatService } from '../services/CombatService.js';
 import type { SpellcastingService } from '../services/SpellcastingService.js';
 import type { RestService } from '../services/RestService.js';
 import type { ClassFeatureService } from '../services/ClassFeatureService.js';
-import type { DiceRollMode, ConditionName, CastSpellParams, RestType } from '@local-dungeon/shared';
+import type { InspirationService } from '../services/InspirationService.js';
+import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
   redis: Redis;
@@ -18,11 +19,12 @@ interface SocketServerDeps {
   spellcastingService: SpellcastingService;
   restService: RestService;
   classFeatureService: ClassFeatureService;
+  inspirationService: InspirationService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -432,6 +434,40 @@ export function createSocketServer(
           socket.emit('feature:resources_initialized', { combatantId: data.combatantId, resources });
         } catch {
           socket.emit('game:error', { message: 'Failed to initialize resources' });
+        }
+      },
+    );
+
+    // ─── Inspiration Events ──────────────────────────────────────────────────
+
+    socket.on(
+      'inspiration:use',
+      async (data: { sessionId: string; combatantId: string; originalRoll: DiceResult; dieIndex: number }) => {
+        try {
+          const newResult = await diceService.rerollWithInspiration(
+            data.combatantId,
+            data.originalRoll,
+            data.dieIndex,
+          );
+          socket.emit('inspiration:reroll_result', { combatantId: data.combatantId, result: newResult });
+          io.to(`session:${data.sessionId}`).emit('inspiration:used', { combatantId: data.combatantId });
+        } catch (err: any) {
+          socket.emit('game:error', { message: err?.message ?? 'Failed to use inspiration' });
+        }
+      },
+    );
+
+    socket.on(
+      'inspiration:gift',
+      async (data: { sessionId: string; fromCombatantId: string; toCombatantId: string }) => {
+        try {
+          await inspirationService.giftInspiration(data.fromCombatantId, data.toCombatantId);
+          io.to(`session:${data.sessionId}`).emit('inspiration:gifted', {
+            fromCombatantId: data.fromCombatantId,
+            toCombatantId: data.toCombatantId,
+          });
+        } catch (err: any) {
+          socket.emit('game:error', { message: err?.message ?? 'Failed to gift inspiration' });
         }
       },
     );

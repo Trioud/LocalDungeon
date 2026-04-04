@@ -38,6 +38,8 @@ export interface CombatantState {
   conModifier?: number;
   resources?: ClassResource[];
   portraitUrl?: string | null;
+  heroicInspiration?: boolean;
+  race?: string;
 }
 
 export interface CombatState {

@@ -251,6 +251,7 @@ model Character {
   conditions     Json   @default("[]")
   exhaustionLevel Int   @default(0) @map("exhaustion_level")
   isBloodied     Boolean @default(false) @map("is_bloodied")
+  heroicInspiration Boolean @default(false) @map("heroic_inspiration")
 
   portraitUrl    String? @map("portrait_url")
   createdAt      DateTime @default(now()) @map("created_at")
