@@ -1,5 +1,6 @@
 import type { SpellcastingState } from '../spellcasting/types';
 import type { ClassResource } from '../features/types';
+import type { WeaponMasteryEntry } from '../weaponmastery/types';
 
 // Types
 export type ActionType = 'action' | 'bonus_action' | 'reaction' | 'free_action';
@@ -40,6 +41,9 @@ export interface CombatantState {
   portraitUrl?: string | null;
   heroicInspiration?: boolean;
   race?: string;
+  assignedMasteries?: WeaponMasteryEntry[];
+  vexTarget?: string;
+  sapped?: boolean;
 }
 
 export interface CombatState {

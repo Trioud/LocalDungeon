@@ -10,7 +10,8 @@ import type { RestService } from '../services/RestService.js';
 import type { ClassFeatureService } from '../services/ClassFeatureService.js';
 import type { InspirationService } from '../services/InspirationService.js';
 import type { STTService } from '../services/STTService.js';
-import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult, WebRTCSignal } from '@local-dungeon/shared';
+import type { WeaponMasteryService } from '../services/WeaponMasteryService.js';
+import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult, WebRTCSignal, MasteryProperty } from '@local-dungeon/shared';
 import { parseVoiceCommand } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
@@ -23,11 +24,12 @@ interface SocketServerDeps {
   classFeatureService: ClassFeatureService;
   inspirationService: InspirationService;
   sttService: STTService;
+  weaponMasteryService: WeaponMasteryService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService, sttService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService, sttService, weaponMasteryService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -582,6 +584,64 @@ export function createSocketServer(
           });
         } catch (err: any) {
           socket.emit('game:error', { message: err?.message ?? 'Failed to gift inspiration' });
+        }
+      },
+    );
+
+    // ─── Weapon Mastery Events ────────────────────────────────────────────────
+
+    socket.on(
+      'combat:assign_mastery',
+      async (data: {
+        sessionId: string;
+        combatantId: string;
+        weaponName: string;
+        property: MasteryProperty;
+        className: string;
+        classLevel: number;
+      }) => {
+        try {
+          const masteries = await weaponMasteryService.assignMastery(
+            data.sessionId,
+            data.combatantId,
+            data.weaponName,
+            data.property,
+            data.className,
+            data.classLevel,
+          );
+          socket.emit('combat:mastery_assigned', { combatantId: data.combatantId, masteries });
+        } catch (err: any) {
+          socket.emit('game:error', { message: err?.message ?? 'Failed to assign mastery' });
+        }
+      },
+    );
+
+    socket.on(
+      'combat:apply_mastery',
+      async (data: {
+        sessionId: string;
+        attackerId: string;
+        targetId: string;
+        weaponName: string;
+        hit: boolean;
+        abilityMod: number;
+        profBonus: number;
+        targetSaveRoll?: number;
+      }) => {
+        try {
+          const effect = await weaponMasteryService.applyMastery(
+            data.sessionId,
+            data.attackerId,
+            data.targetId,
+            data.weaponName,
+            data.hit,
+            data.abilityMod,
+            data.profBonus,
+            data.targetSaveRoll,
+          );
+          io.to(`session:${data.sessionId}`).emit('combat:mastery_applied', effect);
+        } catch (err: any) {
+          socket.emit('game:error', { message: err?.message ?? 'Failed to apply mastery' });
         }
       },
     );

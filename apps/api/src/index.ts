@@ -21,6 +21,7 @@ try {
     classFeatureService: container.cradle.classFeatureService,
     inspirationService: container.cradle.inspirationService,
     sttService: container.cradle.sttService,
+    weaponMasteryService: container.cradle.weaponMasteryService,
   });
   app.log.info(`🎲 LocalDungeon API running on port ${env.PORT}`);
 } catch (err) {

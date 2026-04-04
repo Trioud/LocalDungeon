@@ -10,3 +10,4 @@ export * from './features/index';
 export * from './stt/index';
 export * from './nlp/index';
 export * from './webrtc/index';
+export * from './weaponmastery/index';
