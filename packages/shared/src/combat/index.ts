@@ -27,6 +27,7 @@ export interface CombatantState {
   isActive: boolean;
   deathSaveSuccesses: number;
   deathSaveFailures: number;
+  isStable?: boolean;
 }
 
 export interface CombatState {
@@ -270,5 +271,106 @@ export function endCombat(state: CombatState): CombatState {
       hasReaction: true,
     })),
     log: [...state.log, 'Combat ended.'],
+  };
+}
+
+export function applyDeathSaveRoll(
+  state: CombatState,
+  combatantId: string,
+  roll: number,
+): { state: CombatState; outcome: 'none' | 'stable' | 'dead'; regainedHp: boolean } {
+  const idx = state.combatants.findIndex((c) => c.id === combatantId);
+  if (idx === -1) return { state, outcome: 'none', regainedHp: false };
+
+  let combatant = { ...state.combatants[idx] };
+  const newLog = [...state.log];
+  let outcome: 'none' | 'stable' | 'dead' = 'none';
+  let regainedHp = false;
+
+  if (roll === 20) {
+    combatant.hp = 1;
+    combatant.conditions = combatant.conditions.filter((c) => c !== 'unconscious');
+    combatant.deathSaveSuccesses = 0;
+    combatant.deathSaveFailures = 0;
+    combatant.isStable = false;
+    regainedHp = true;
+    newLog.push(`${combatant.name} rolls a natural 20 and regains consciousness!`);
+  } else if (roll === 1) {
+    combatant.deathSaveFailures = combatant.deathSaveFailures + 2;
+    newLog.push(`${combatant.name} rolls a natural 1! Two death save failures.`);
+    if (combatant.deathSaveFailures >= 3) {
+      outcome = 'dead';
+      newLog.push(`${combatant.name} has died!`);
+    }
+  } else if (roll >= 10) {
+    combatant.deathSaveSuccesses = combatant.deathSaveSuccesses + 1;
+    if (combatant.deathSaveSuccesses >= 3) {
+      combatant.isStable = true;
+      outcome = 'stable';
+      newLog.push(`${combatant.name} is stable!`);
+    }
+  } else {
+    combatant.deathSaveFailures = combatant.deathSaveFailures + 1;
+    if (combatant.deathSaveFailures >= 3) {
+      outcome = 'dead';
+      newLog.push(`${combatant.name} has died!`);
+    }
+  }
+
+  const newCombatants = state.combatants.map((c, i) => (i === idx ? combatant : c));
+  return {
+    state: { ...state, combatants: newCombatants, log: newLog },
+    outcome,
+    regainedHp,
+  };
+}
+
+export function stabilizeCombatant(state: CombatState, combatantId: string): CombatState {
+  const idx = state.combatants.findIndex((c) => c.id === combatantId);
+  if (idx === -1) return state;
+  const combatant = {
+    ...state.combatants[idx],
+    isStable: true,
+    deathSaveSuccesses: 3,
+  };
+  return {
+    ...state,
+    combatants: state.combatants.map((c, i) => (i === idx ? combatant : c)),
+    log: [...state.log, `${combatant.name} has been stabilized!`],
+  };
+}
+
+export function applyDamageAtZeroHP(
+  state: CombatState,
+  combatantId: string,
+  damage: number,
+): { state: CombatState; outcome: 'none' | 'dead' } {
+  const idx = state.combatants.findIndex((c) => c.id === combatantId);
+  if (idx === -1) return { state, outcome: 'none' };
+
+  let combatant = { ...state.combatants[idx] };
+  const newLog = [...state.log];
+  let outcome: 'none' | 'dead' = 'none';
+
+  if (damage >= combatant.maxHp) {
+    combatant.deathSaveFailures = 3;
+    outcome = 'dead';
+    newLog.push(`${combatant.name} suffers massive damage and dies instantly!`);
+  } else {
+    combatant.deathSaveFailures = combatant.deathSaveFailures + 1;
+    newLog.push(`${combatant.name} takes damage while downed — 1 death save failure.`);
+    if (combatant.deathSaveFailures >= 3) {
+      outcome = 'dead';
+      newLog.push(`${combatant.name} has died!`);
+    }
+  }
+
+  return {
+    state: {
+      ...state,
+      combatants: state.combatants.map((c, i) => (i === idx ? combatant : c)),
+      log: newLog,
+    },
+    outcome,
   };
 }

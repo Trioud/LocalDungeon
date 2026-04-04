@@ -261,6 +261,49 @@ export function createSocketServer(
         socket.emit('game:error', { message: 'Failed to get combat state' });
       }
     });
+
+    socket.on(
+      'combat:record_death_save',
+      async (data: { sessionId: string; combatantId: string; roll: number }) => {
+        try {
+          const result = await combatService.recordDeathSaveRoll(
+            data.sessionId,
+            data.combatantId,
+            data.roll,
+            userId,
+          );
+          socket.emit('combat:death_save_result', {
+            combatantId: data.combatantId,
+            roll: result.roll,
+            successes: result.successes,
+            failures: result.failures,
+            outcome: result.outcome,
+          });
+          io.to(`session:${data.sessionId}`).emit('combat:state', result.state);
+          if (result.outcome !== 'none') {
+            io.to(`session:${data.sessionId}`).emit('combat:death_save_outcome', {
+              combatantId: data.combatantId,
+              outcome: result.outcome,
+            });
+          }
+        } catch {
+          socket.emit('game:error', { message: 'Failed to record death save' });
+        }
+      },
+    );
+
+    socket.on('combat:stabilize', async (data: { sessionId: string; combatantId: string }) => {
+      try {
+        const state = await combatService.stabilize(data.sessionId, data.combatantId, userId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+        io.to(`session:${data.sessionId}`).emit('combat:death_save_outcome', {
+          combatantId: data.combatantId,
+          outcome: 'stable',
+        });
+      } catch {
+        socket.emit('game:error', { message: 'Failed to stabilize combatant' });
+      }
+    });
   });
 
   return io;

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import type { CombatantState, ConditionName } from '@local-dungeon/shared';
 import ConditionBadge from './ConditionBadge';
+import DeathSaveTracker from './DeathSaveTracker';
 
 const ALL_CONDITIONS: ConditionName[] = [
   'blinded', 'charmed', 'deafened', 'exhaustion', 'frightened', 'grappled',
@@ -113,24 +114,9 @@ export default function CombatantCard({
         </div>
       )}
 
-      {/* Death saves (shown when unconscious) */}
-      {isUnconscious && (
-        <div className="mt-2 text-xs text-gray-600">
-          <span className="mr-2">
-            Successes:{' '}
-            {Array.from({ length: 3 }).map((_, i) => (
-              <span key={i}>{i < combatant.deathSaveSuccesses ? '◆' : '◇'}</span>
-            ))}
-          </span>
-          <span>
-            Failures:{' '}
-            {Array.from({ length: 3 }).map((_, i) => (
-              <span key={i} className={i < combatant.deathSaveFailures ? 'text-red-600' : ''}>
-                {i < combatant.deathSaveFailures ? '◆' : '◇'}
-              </span>
-            ))}
-          </span>
-        </div>
+      {/* Death saves (shown when at 0 HP) */}
+      {combatant.hp === 0 && (
+        <DeathSaveTracker combatant={combatant} />
       )}
 
       {/* Expanded controls */}

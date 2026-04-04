@@ -10,6 +10,8 @@ import {
   removeCondition as removeConditionFn,
   advanceTurn as advanceTurnFn,
   recordDeathSave as recordDeathSaveFn,
+  applyDeathSaveRoll as applyDeathSaveRollFn,
+  stabilizeCombatant as stabilizeCombatantFn,
 } from '@local-dungeon/shared';
 
 interface CombatServiceDeps {
@@ -292,6 +294,78 @@ export class CombatService {
       actorId,
       payload: { message: 'Combatant removed', combatantId, combatantName: combatant?.name },
     });
+    return newState;
+  }
+
+  async recordDeathSaveRoll(
+    sessionId: string,
+    combatantId: string,
+    roll: number,
+    actorId?: string,
+  ): Promise<{ state: CombatState; outcome: 'none' | 'stable' | 'dead'; roll: number; successes: number; failures: number }> {
+    const state = await this.load(sessionId);
+    if (!state) throw new Error(`No combat state for session ${sessionId}`);
+    const idx = state.combatants.findIndex((c) => c.id === combatantId);
+    if (idx === -1) throw new Error(`Combatant ${combatantId} not found`);
+
+    const { state: newState, outcome, regainedHp } = applyDeathSaveRollFn(state, combatantId, roll);
+    await this.save(newState);
+
+    const updated = newState.combatants[idx];
+    const logPayload: Record<string, unknown> = {
+      combatantId,
+      combatantName: updated.name,
+      roll,
+      outcome,
+      regainedHp,
+      successes: updated.deathSaveSuccesses,
+      failures: updated.deathSaveFailures,
+    };
+
+    if (outcome === 'dead' || outcome === 'stable') {
+      await this.gameLogService.logEvent({
+        sessionId,
+        type: 'death_save',
+        actorId,
+        payload: logPayload,
+      });
+    }
+
+    return {
+      state: newState,
+      outcome,
+      roll,
+      successes: updated.deathSaveSuccesses,
+      failures: updated.deathSaveFailures,
+    };
+  }
+
+  async stabilize(
+    sessionId: string,
+    combatantId: string,
+    actorId?: string,
+  ): Promise<CombatState> {
+    const state = await this.load(sessionId);
+    if (!state) throw new Error(`No combat state for session ${sessionId}`);
+    const idx = state.combatants.findIndex((c) => c.id === combatantId);
+    if (idx === -1) throw new Error(`Combatant ${combatantId} not found`);
+
+    const newState = stabilizeCombatantFn(state, combatantId);
+    await this.save(newState);
+
+    const updated = newState.combatants[idx];
+    await this.gameLogService.logEvent({
+      sessionId,
+      type: 'death_save',
+      actorId,
+      payload: {
+        combatantId,
+        combatantName: updated.name,
+        outcome: 'stable',
+        stabilizedBy: actorId,
+      },
+    });
+
     return newState;
   }
 }

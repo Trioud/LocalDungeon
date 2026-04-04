@@ -242,4 +242,75 @@ describe('CombatService', () => {
       expect(state.combatants.find((c) => c.id === 'c1')).toBeUndefined();
     });
   });
+
+  describe('recordDeathSaveRoll', () => {
+    it('nat 20 regains HP for combatant', async () => {
+      mockRedis.get.mockResolvedValueOnce(mockState({
+        combatants: [makeCombatant({ id: 'c1', hp: 0, conditions: ['unconscious'], isActive: true })],
+      }));
+      const svc = makeService();
+      const result = await svc.recordDeathSaveRoll('s1', 'c1', 20, 'user1');
+      expect(result.state.combatants[0].hp).toBe(1);
+      expect(result.outcome).toBe('none');
+    });
+
+    it('nat 1 adds 2 failures', async () => {
+      mockRedis.get.mockResolvedValueOnce(mockState({
+        combatants: [makeCombatant({ id: 'c1', hp: 0, deathSaveFailures: 0, isActive: true })],
+      }));
+      const svc = makeService();
+      const result = await svc.recordDeathSaveRoll('s1', 'c1', 1, 'user1');
+      expect(result.failures).toBe(2);
+    });
+
+    it('3 failures outcome is dead and logs event', async () => {
+      mockRedis.get.mockResolvedValueOnce(mockState({
+        combatants: [makeCombatant({ id: 'c1', hp: 0, deathSaveFailures: 2, isActive: true })],
+      }));
+      const svc = makeService();
+      const result = await svc.recordDeathSaveRoll('s1', 'c1', 5, 'user1');
+      expect(result.outcome).toBe('dead');
+      expect(mockGameLogService.logEvent).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'death_save', payload: expect.objectContaining({ outcome: 'dead' }) }),
+      );
+    });
+
+    it('3 successes outcome is stable and logs event', async () => {
+      mockRedis.get.mockResolvedValueOnce(mockState({
+        combatants: [makeCombatant({ id: 'c1', hp: 0, deathSaveSuccesses: 2, isActive: true })],
+      }));
+      const svc = makeService();
+      const result = await svc.recordDeathSaveRoll('s1', 'c1', 15, 'user1');
+      expect(result.outcome).toBe('stable');
+      expect(mockGameLogService.logEvent).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'death_save', payload: expect.objectContaining({ outcome: 'stable' }) }),
+      );
+    });
+
+    it('throws if combatant not found', async () => {
+      mockRedis.get.mockResolvedValueOnce(mockState());
+      const svc = makeService();
+      await expect(svc.recordDeathSaveRoll('s1', 'nonexistent', 10)).rejects.toThrow();
+    });
+  });
+
+  describe('stabilize', () => {
+    it('marks combatant as stable', async () => {
+      mockRedis.get.mockResolvedValueOnce(mockState({
+        combatants: [makeCombatant({ id: 'c1', hp: 0, isActive: true })],
+      }));
+      const svc = makeService();
+      const state = await svc.stabilize('s1', 'c1', 'user1');
+      expect(state.combatants[0].isStable).toBe(true);
+      expect(mockGameLogService.logEvent).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'death_save', payload: expect.objectContaining({ outcome: 'stable' }) }),
+      );
+    });
+
+    it('throws if combatant not found', async () => {
+      mockRedis.get.mockResolvedValueOnce(mockState());
+      const svc = makeService();
+      await expect(svc.stabilize('s1', 'nonexistent')).rejects.toThrow();
+    });
+  });
 });

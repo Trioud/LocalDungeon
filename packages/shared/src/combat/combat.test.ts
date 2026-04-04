@@ -3,6 +3,7 @@ import {
   sortInitiative, applyDamage, applyHealing, applyTempHp,
   addCondition, removeCondition, advanceTurn, resetActionsForTurn,
   useAction, applyExhaustion, recordDeathSave, startCombat, endCombat,
+  applyDeathSaveRoll, stabilizeCombatant, applyDamageAtZeroHP,
 } from './index';
 import type { CombatantState, CombatState } from './index';
 
@@ -341,5 +342,122 @@ describe('endCombat', () => {
     expect(ended.combatants[0].hasAction).toBe(true);
     expect(ended.combatants[0].hasBonusAction).toBe(true);
     expect(ended.combatants[0].hasReaction).toBe(true);
+  });
+});
+
+describe('applyDeathSaveRoll', () => {
+  it('nat 20 regains 1 HP and removes unconscious', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, conditions: ['unconscious'], deathSaveSuccesses: 1, deathSaveFailures: 1, isActive: true })],
+    });
+    const { state: next, outcome, regainedHp } = applyDeathSaveRoll(state, 'c1', 20);
+    expect(next.combatants[0].hp).toBe(1);
+    expect(next.combatants[0].conditions).not.toContain('unconscious');
+    expect(outcome).toBe('none');
+    expect(regainedHp).toBe(true);
+    expect(next.combatants[0].deathSaveSuccesses).toBe(0);
+    expect(next.combatants[0].deathSaveFailures).toBe(0);
+  });
+
+  it('nat 1 counts as 2 failures', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, deathSaveFailures: 0, isActive: true })],
+    });
+    const { state: next } = applyDeathSaveRoll(state, 'c1', 1);
+    expect(next.combatants[0].deathSaveFailures).toBe(2);
+  });
+
+  it('nat 1 with 2 existing failures = dead', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, deathSaveFailures: 2, isActive: true })],
+    });
+    const { outcome } = applyDeathSaveRoll(state, 'c1', 1);
+    expect(outcome).toBe('dead');
+  });
+
+  it('roll >= 10 is a success', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, isActive: true })],
+    });
+    const { state: next } = applyDeathSaveRoll(state, 'c1', 15);
+    expect(next.combatants[0].deathSaveSuccesses).toBe(1);
+  });
+
+  it('3 successes = stable outcome', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, deathSaveSuccesses: 2, isActive: true })],
+    });
+    const { outcome, state: next } = applyDeathSaveRoll(state, 'c1', 12);
+    expect(outcome).toBe('stable');
+    expect(next.combatants[0].isStable).toBe(true);
+  });
+
+  it('roll < 10 (not 1) is a single failure', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, isActive: true })],
+    });
+    const { state: next } = applyDeathSaveRoll(state, 'c1', 7);
+    expect(next.combatants[0].deathSaveFailures).toBe(1);
+  });
+
+  it('3 failures = dead outcome', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, deathSaveFailures: 2, isActive: true })],
+    });
+    const { outcome } = applyDeathSaveRoll(state, 'c1', 5);
+    expect(outcome).toBe('dead');
+  });
+});
+
+describe('stabilizeCombatant', () => {
+  it('marks combatant as stable', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, isActive: true })],
+    });
+    const next = stabilizeCombatant(state, 'c1');
+    expect(next.combatants[0].isStable).toBe(true);
+    expect(next.combatants[0].deathSaveSuccesses).toBe(3);
+  });
+
+  it('combatant stays at 0 HP', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, isActive: true })],
+    });
+    const next = stabilizeCombatant(state, 'c1');
+    expect(next.combatants[0].hp).toBe(0);
+  });
+
+  it('returns unchanged state for unknown combatantId', () => {
+    const state = makeState();
+    const next = stabilizeCombatant(state, 'nonexistent');
+    expect(next).toEqual(state);
+  });
+});
+
+describe('applyDamageAtZeroHP', () => {
+  it('adds 1 failure for normal damage', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, maxHp: 30, isActive: true })],
+    });
+    const { state: next, outcome } = applyDamageAtZeroHP(state, 'c1', 5);
+    expect(next.combatants[0].deathSaveFailures).toBe(1);
+    expect(outcome).toBe('none');
+  });
+
+  it('massive damage (damage >= maxHp) = instant death', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, maxHp: 30, isActive: true })],
+    });
+    const { state: next, outcome } = applyDamageAtZeroHP(state, 'c1', 30);
+    expect(next.combatants[0].deathSaveFailures).toBe(3);
+    expect(outcome).toBe('dead');
+  });
+
+  it('damage accumulating to 3 failures = dead', () => {
+    const state = makeState({
+      combatants: [makeCombatant({ id: 'c1', hp: 0, maxHp: 30, deathSaveFailures: 2, isActive: true })],
+    });
+    const { outcome } = applyDamageAtZeroHP(state, 'c1', 5);
+    expect(outcome).toBe('dead');
   });
 });
