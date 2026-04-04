@@ -16,7 +16,6 @@ export interface CreateGameEventData {
 
 export interface IGameEventRepository {
   create(data: CreateGameEventData): Promise<GameEventRecord>;
-  findBySession(sessionId: string, limit?: number): Promise<GameEventRecord[]>;
   listBySession(
     sessionId: string,
     opts?: { limit?: number; before?: string },

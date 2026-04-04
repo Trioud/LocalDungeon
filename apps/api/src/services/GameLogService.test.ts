@@ -17,7 +17,6 @@ function makeRecord(overrides: Partial<GameEventRecord> = {}): GameEventRecord {
 function makeRepo(overrides: Partial<IGameEventRepository> = {}): IGameEventRepository {
   return {
     create: vi.fn().mockResolvedValue(makeRecord()),
-    findBySession: vi.fn().mockResolvedValue([makeRecord()]),
     listBySession: vi.fn().mockResolvedValue([makeRecord()]),
     ...overrides,
   };

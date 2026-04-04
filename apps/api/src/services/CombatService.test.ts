@@ -88,7 +88,7 @@ describe('CombatService', () => {
     it('creates and saves initial state', async () => {
       const svc = makeService();
       const combatants = [
-        { id: 'c1', name: 'Hero', initiative: 15, initiativeRoll: 10, hp: 30, maxHp: 30, tempHp: 0, ac: 15, conditions: [] as const, exhaustionLevel: 0, isBloodied: false, isConcentrating: false, hasReaction: true, isPlayer: true, deathSaveSuccesses: 0, deathSaveFailures: 0 },
+        { id: 'c1', name: 'Hero', initiative: 15, initiativeRoll: 10, hp: 30, maxHp: 30, tempHp: 0, ac: 15, conditions: [] as const, exhaustionLevel: 0, isBloodied: false, isConcentrating: false, isPlayer: true, deathSaveSuccesses: 0, deathSaveFailures: 0 },
       ] as Omit<CombatantState, 'isActive' | 'hasAction' | 'hasBonusAction' | 'hasReaction'>[];
       const state = await svc.initCombat('s1', combatants);
       expect(state.isActive).toBe(false);

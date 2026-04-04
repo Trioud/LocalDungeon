@@ -34,7 +34,7 @@ function makeSessionRepo(overrides: Partial<ISessionRepository> = {}): ISessionR
 function makeGameEventRepo(overrides: Partial<IGameEventRepository> = {}): IGameEventRepository {
   return {
     create: vi.fn().mockResolvedValue({}),
-    findBySession: vi.fn().mockResolvedValue([]),
+    listBySession: vi.fn().mockResolvedValue([]),
     ...overrides,
   };
 }

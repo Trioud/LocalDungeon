@@ -6,7 +6,7 @@ interface CombatControlsProps {
   isActive: boolean;
   onStart: () => void;
   onEnd: () => void;
-  onAddCombatant: (combatant: Omit<CombatantState, 'isActive' | 'hasAction' | 'hasBonusAction' | 'hasReaction' | 'conditions' | 'exhaustionLevel' | 'isBloodied' | 'isConcentrating' | 'deathSaveSuccesses' | 'deathSaveFailures'>) => void;
+  onAddCombatant: (combatant: Omit<CombatantState, 'isActive' | 'hasAction' | 'hasBonusAction' | 'hasReaction' | 'conditions' | 'exhaustionLevel' | 'isBloodied' | 'deathSaveSuccesses' | 'deathSaveFailures'>) => void;
 }
 
 export default function CombatControls({ isActive, onStart, onEnd, onAddCombatant }: CombatControlsProps) {

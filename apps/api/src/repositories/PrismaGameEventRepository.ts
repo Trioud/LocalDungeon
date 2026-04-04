@@ -36,23 +36,6 @@ export class PrismaGameEventRepository implements IGameEventRepository {
     };
   }
 
-  async findBySession(sessionId: string, limit = 50): Promise<GameEventRecord[]> {
-    const rows = await this.prisma.gameEvent.findMany({
-      where: { sessionId },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-    });
-
-    return rows.map((row) => ({
-      id: row.id,
-      sessionId: row.sessionId,
-      userId: row.userId,
-      type: row.type,
-      payload: row.payload,
-      createdAt: row.createdAt,
-    }));
-  }
-
   async listBySession(
     sessionId: string,
     opts?: { limit?: number; before?: string },
