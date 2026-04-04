@@ -6,7 +6,8 @@ import type { DiceService } from '../services/DiceService.js';
 import type { GameLogService } from '../services/GameLogService.js';
 import type { CombatService } from '../services/CombatService.js';
 import type { SpellcastingService } from '../services/SpellcastingService.js';
-import type { DiceRollMode, ConditionName, CastSpellParams } from '@local-dungeon/shared';
+import type { RestService } from '../services/RestService.js';
+import type { DiceRollMode, ConditionName, CastSpellParams, RestType } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
   redis: Redis;
@@ -14,11 +15,12 @@ interface SocketServerDeps {
   gameLogService: GameLogService;
   combatService: CombatService;
   spellcastingService: SpellcastingService;
+  restService: RestService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService, combatService, spellcastingService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService, spellcastingService, restService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -340,6 +342,55 @@ export function createSocketServer(
         socket.emit('spell:concentration_save_result', result);
       } catch {
         socket.emit('game:error', { message: 'Failed to process concentration save' });
+      }
+    });
+
+    // ─── Rest Events ──────────────────────────────────────────────────────────
+
+    socket.on('rest:propose', async (data: { sessionId: string; restType: RestType; requiredCount?: number }) => {
+      try {
+        const players = await redis.smembers(`session:${data.sessionId}:players`);
+        const requiredCount = data.requiredCount ?? Math.max(1, players.length);
+        const proposal = await restService.proposeRest(
+          data.sessionId,
+          userId,
+          data.restType,
+          requiredCount,
+        );
+        io.to(`session:${data.sessionId}`).emit('rest:proposed', { proposal });
+      } catch {
+        socket.emit('game:error', { message: 'Failed to propose rest' });
+      }
+    });
+
+    socket.on('rest:confirm', async (data: { sessionId: string }) => {
+      try {
+        const { proposal, executed } = await restService.confirmRest(data.sessionId, userId);
+        if (executed) {
+          io.to(`session:${data.sessionId}`).emit('rest:executed', { proposal });
+        } else {
+          io.to(`session:${data.sessionId}`).emit('rest:confirmation_update', { proposal });
+        }
+      } catch (err: any) {
+        socket.emit('game:error', { message: err?.message ?? 'Failed to confirm rest' });
+      }
+    });
+
+    socket.on('rest:cancel', async (data: { sessionId: string }) => {
+      try {
+        await restService.cancelRest(data.sessionId);
+        io.to(`session:${data.sessionId}`).emit('rest:cancelled', { sessionId: data.sessionId });
+      } catch {
+        socket.emit('game:error', { message: 'Failed to cancel rest' });
+      }
+    });
+
+    socket.on('rest:spend_hit_dice', async (data: { sessionId: string; combatantId: string; diceCount: number }) => {
+      try {
+        const result = await restService.spendHitDice(data.sessionId, data.combatantId, data.diceCount);
+        socket.emit('rest:hit_dice_result', { combatantId: data.combatantId, ...result });
+      } catch (err: any) {
+        socket.emit('game:error', { message: err?.message ?? 'Failed to spend hit dice' });
       }
     });
   });

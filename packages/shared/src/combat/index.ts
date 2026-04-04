@@ -31,6 +31,10 @@ export interface CombatantState {
   deathSaveSuccesses: number;
   deathSaveFailures: number;
   isStable?: boolean;
+  hitDie?: number;
+  hitDiceRemaining?: number;
+  maxHitDice?: number;
+  conModifier?: number;
 }
 
 export interface CombatState {
