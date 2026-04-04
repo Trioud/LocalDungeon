@@ -9,3 +9,4 @@ export * from './levelup/index';
 export * from './features/index';
 export * from './stt/index';
 export * from './nlp/index';
+export * from './webrtc/index';

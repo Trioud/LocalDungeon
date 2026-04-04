@@ -10,7 +10,7 @@ import type { RestService } from '../services/RestService.js';
 import type { ClassFeatureService } from '../services/ClassFeatureService.js';
 import type { InspirationService } from '../services/InspirationService.js';
 import type { STTService } from '../services/STTService.js';
-import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult } from '@local-dungeon/shared';
+import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult, WebRTCSignal } from '@local-dungeon/shared';
 import { parseVoiceCommand } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
@@ -184,6 +184,15 @@ export function createSocketServer(
       if (sttService.isListening(socket.id)) {
         await sttService.stopListening(socket.id).catch(() => {});
       }
+      // Clean up WebRTC voice room if socket was in one
+      if (currentSessionId) {
+        const voiceKey = `webrtc:voice:${currentSessionId}`;
+        const wasInVoice = await redis.hexists(voiceKey, socket.id).catch(() => 0);
+        if (wasInVoice) {
+          await redis.hdel(voiceKey, socket.id).catch(() => {});
+          io.to(`session:${currentSessionId}`).emit('webrtc:peer_left', { socketId: socket.id });
+        }
+      }
     });
 
     // ─── Voice Events ─────────────────────────────────────────────────────────
@@ -232,6 +241,55 @@ export function createSocketServer(
       } catch {
         socket.emit('game:error', { message: 'Failed to stop voice recognition' });
       }
+    });
+
+    // ─── WebRTC Signaling Events ──────────────────────────────────────────────
+
+    socket.on('webrtc:join_voice', async (data: { characterName: string }) => {
+      if (!currentSessionId) return;
+      const voiceKey = `webrtc:voice:${currentSessionId}`;
+      await redis.hset(voiceKey, socket.id, data.characterName);
+      await redis.expire(voiceKey, 86400);
+
+      // Notify other peers
+      socket.to(`session:${currentSessionId}`).emit('webrtc:peer_joined', {
+        socketId: socket.id,
+        characterName: data.characterName,
+      });
+
+      // Send existing peers to the joining socket
+      const all = await redis.hgetall(voiceKey);
+      const peers = Object.entries(all)
+        .filter(([sid]) => sid !== socket.id)
+        .map(([sid, charName]) => ({ socketId: sid, characterName: charName }));
+      socket.emit('webrtc:existing_peers', { peers });
+    });
+
+    socket.on('webrtc:leave_voice', async () => {
+      if (!currentSessionId) return;
+      await redis.hdel(`webrtc:voice:${currentSessionId}`, socket.id);
+      io.to(`session:${currentSessionId}`).emit('webrtc:peer_left', { socketId: socket.id });
+    });
+
+    socket.on('webrtc:signal', (data: { signal: WebRTCSignal }) => {
+      const { signal } = data;
+      io.to(signal.toSocketId).emit('webrtc:signal', { signal });
+    });
+
+    socket.on('webrtc:mute', (data: { muted: boolean }) => {
+      if (!currentSessionId) return;
+      io.to(`session:${currentSessionId}`).emit('webrtc:peer_muted', {
+        socketId: socket.id,
+        muted: data.muted,
+      });
+    });
+
+    socket.on('webrtc:speaking', (data: { speaking: boolean }) => {
+      if (!currentSessionId) return;
+      io.to(`session:${currentSessionId}`).emit('webrtc:peer_speaking', {
+        socketId: socket.id,
+        speaking: data.speaking,
+      });
     });
 
     // ─── Combat Events ───────────────────────────────────────────────────────

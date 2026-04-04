@@ -12,6 +12,8 @@ import GameLog from '@/components/gamelog/GameLog';
 import CombatTracker from '@/components/combat/CombatTracker';
 import VoiceButton from '@/components/voice/VoiceButton';
 import TranscriptPanel from '@/components/voice/TranscriptPanel';
+import VoiceRoomPanel from '@/components/voice/VoiceRoomPanel';
+import AudioPlayer from '@/components/voice/AudioPlayer';
 
 function PhaseBadge({ phase }: { phase: string }) {
   if (phase === 'combat') return <span className="text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-800">⚔️ Combat</span>;
@@ -194,7 +196,20 @@ export default function SessionRoomPage() {
                 onModeToggle={() => voice.setMode(voice.mode === 'push_to_talk' ? 'continuous' : 'push_to_talk')}
               />
             </div>
+            <VoiceRoomPanel
+              isSupported={voice.webrtc.isSupported}
+              isInVoice={voice.webrtc.isInVoice}
+              isMuted={voice.webrtc.isMuted}
+              peers={voice.webrtc.peers}
+              onJoin={voice.webrtc.joinVoice}
+              onLeave={voice.webrtc.leaveVoice}
+              onToggleMute={voice.webrtc.toggleMute}
+              onSetVolume={voice.webrtc.setPeerVolume}
+            />
             <TranscriptPanel transcripts={voice.transcripts} />
+            {voice.webrtc.isInVoice && (
+              <AudioPlayer peers={voice.webrtc.peers} audioStreams={voice.webrtc.audioStreams} />
+            )}
           </div>
         </aside>
       </div>
