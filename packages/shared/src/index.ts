@@ -7,3 +7,4 @@ export * from './spellcasting/index';
 export * from './rest/index';
 export * from './levelup/index';
 export * from './features/index';
+export * from './stt/index';

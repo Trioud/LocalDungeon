@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { useSessionInfo, useLeaveSession } from '@/lib/hooks/useSession';
 import { useSessionSocket } from '@/lib/hooks/useSessionSocket';
 import { useDiceRoller } from '@/lib/hooks/useDiceRoller';
+import { useVoice } from '@/lib/hooks/useVoice';
 import { useAuthStore } from '@/lib/stores/authStore';
 import PlayerList from '@/components/session/PlayerList';
 import DiceRoller from '@/components/dice/DiceRoller';
 import GameLog from '@/components/gamelog/GameLog';
 import CombatTracker from '@/components/combat/CombatTracker';
+import VoiceButton from '@/components/voice/VoiceButton';
+import TranscriptPanel from '@/components/voice/TranscriptPanel';
 
 function PhaseBadge({ phase }: { phase: string }) {
   if (phase === 'combat') return <span className="text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-800">⚔️ Combat</span>;
@@ -59,6 +62,12 @@ export default function SessionRoomPage() {
   const leaveSession = useLeaveSession();
   const user = useAuthStore((s) => s.user);
   const [copied, setCopied] = useState(false);
+
+  const voice = useVoice({
+    sessionId: id,
+    speakerCharacterId: '',
+    speakerName: user?.username ?? '',
+  });
 
   if (isLoading) {
     return (
@@ -173,6 +182,20 @@ export default function SessionRoomPage() {
             maxPlayers={session.maxPlayers}
             connectedUserIds={connectedUserIds}
           />
+          <div className="mt-4 border-t border-gray-100 pt-3">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-semibold text-gray-700">Voice</h4>
+              <VoiceButton
+                isListening={voice.isListening}
+                isSupported={voice.isSupported}
+                mode={voice.mode}
+                onStart={voice.startListening}
+                onStop={voice.stopListening}
+                onModeToggle={() => voice.setMode(voice.mode === 'push_to_talk' ? 'continuous' : 'push_to_talk')}
+              />
+            </div>
+            <TranscriptPanel transcripts={voice.transcripts} />
+          </div>
         </aside>
       </div>
     </div>

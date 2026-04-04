@@ -9,6 +9,7 @@ import type { SpellcastingService } from '../services/SpellcastingService.js';
 import type { RestService } from '../services/RestService.js';
 import type { ClassFeatureService } from '../services/ClassFeatureService.js';
 import type { InspirationService } from '../services/InspirationService.js';
+import type { STTService } from '../services/STTService.js';
 import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
@@ -20,11 +21,12 @@ interface SocketServerDeps {
   restService: RestService;
   classFeatureService: ClassFeatureService;
   inspirationService: InspirationService;
+  sttService: STTService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService, sttService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -51,8 +53,10 @@ export function createSocketServer(
   io.on('connection', (socket) => {
     const userId = (socket as any).userId as string;
     const username = (socket as any).username as string;
+    let currentSessionId: string | null = null;
 
     socket.on('session:join', async (data: { sessionId: string }) => {
+      currentSessionId = data.sessionId;
       const roomName = `session:${data.sessionId}`;
       await socket.join(roomName);
       await redis.sadd(`session:${data.sessionId}:players`, userId);
@@ -176,6 +180,43 @@ export function createSocketServer(
 
     socket.on('disconnect', async () => {
       // Don't remove from Redis immediately — Phase 8 handles reconnect grace period
+      if (sttService.isListening(socket.id)) {
+        await sttService.stopListening(socket.id).catch(() => {});
+      }
+    });
+
+    // ─── Voice Events ─────────────────────────────────────────────────────────
+
+    socket.on('voice:start', async () => {
+      if (!currentSessionId) return socket.emit('game:error', { message: 'Not in a session' });
+      try {
+        await sttService.startListening(
+          socket.id,
+          currentSessionId,
+          (event, data) => socket.emit(event as any, data),
+          (event, data) => io.to(`session:${currentSessionId}`).emit(event as any, data),
+        );
+        socket.emit('voice:started', {});
+      } catch {
+        socket.emit('game:error', { message: 'Failed to start voice recognition' });
+      }
+    });
+
+    socket.on('voice:audio_chunk', async (data: { audio: number[]; sampleRate: number }) => {
+      try {
+        await sttService.sendAudioChunk(socket.id, Buffer.from(data.audio), data.sampleRate);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to process audio chunk' });
+      }
+    });
+
+    socket.on('voice:stop', async () => {
+      try {
+        await sttService.stopListening(socket.id);
+        socket.emit('voice:stopped', {});
+      } catch {
+        socket.emit('game:error', { message: 'Failed to stop voice recognition' });
+      }
     });
 
     // ─── Combat Events ───────────────────────────────────────────────────────

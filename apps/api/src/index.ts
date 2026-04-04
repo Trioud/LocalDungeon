@@ -20,6 +20,7 @@ try {
     restService: container.cradle.restService,
     classFeatureService: container.cradle.classFeatureService,
     inspirationService: container.cradle.inspirationService,
+    sttService: container.cradle.sttService,
   });
   app.log.info(`🎲 LocalDungeon API running on port ${env.PORT}`);
 } catch (err) {

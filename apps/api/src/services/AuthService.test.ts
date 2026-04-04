@@ -13,6 +13,7 @@ const testEnv: Env = {
   JWT_REFRESH_SECRET: 'test-refresh-secret-that-is-long-enough-32chars',
   CORS_ORIGIN: 'http://localhost:3000',
   STORAGE_PROVIDER: 'memory',
+  STT_PROVIDER: 'mock',
 };
 
 const mockUser: User = {

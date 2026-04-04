@@ -15,6 +15,8 @@ const envSchema = z.object({
   S3_ACCESS_KEY_ID: z.string().optional(),
   S3_SECRET_ACCESS_KEY: z.string().optional(),
   S3_PUBLIC_BASE_URL: z.string().optional(),
+  STT_PROVIDER: z.enum(['mock', 'deepgram']).default('mock'),
+  DEEPGRAM_API_KEY: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

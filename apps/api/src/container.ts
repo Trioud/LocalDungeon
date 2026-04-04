@@ -10,6 +10,9 @@ import { PrismaGameEventRepository } from './repositories/PrismaGameEventReposit
 import { RedisSessionStore } from './repositories/RedisSessionStore.js';
 import { InMemoryFileStorage } from './adapters/InMemoryFileStorage.js';
 import { S3FileStorage } from './adapters/S3FileStorage.js';
+import { MockSTTProvider } from './adapters/MockSTTProvider.js';
+import { DeepgramSTTProvider } from './adapters/DeepgramSTTProvider.js';
+import { STTService } from './services/STTService.js';
 import { AuthService } from './services/AuthService.js';
 import { GameDataService } from './services/GameDataService.js';
 import { CharacterService } from './services/CharacterService.js';
@@ -46,6 +49,11 @@ export function buildContainer(env: Env) {
         })
       : new InMemoryFileStorage();
 
+  const sttProvider =
+    env.STT_PROVIDER === 'deepgram' && env.DEEPGRAM_API_KEY
+      ? new DeepgramSTTProvider({ apiKey: env.DEEPGRAM_API_KEY })
+      : new MockSTTProvider();
+
   container.register({
     env: asValue(env),
     prisma: asValue(prisma),
@@ -71,6 +79,8 @@ export function buildContainer(env: Env) {
     levelUpService: asClass(LevelUpService).scoped(),
     classFeatureService: asClass(ClassFeatureService).scoped(),
     inspirationService: asClass(InspirationService).scoped(),
+    sttProvider: asValue(sttProvider),
+    sttService: asClass(STTService).scoped(),
   });
 
   return container;
