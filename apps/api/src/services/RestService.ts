@@ -6,7 +6,6 @@ import {
   applyLongRestFeatures,
   applyShortRestFeatures,
   computeHPRecovery,
-  computeHitDiceAfterRest,
 } from '@local-dungeon/shared';
 import type { RestProposal, RestType } from '@local-dungeon/shared';
 
