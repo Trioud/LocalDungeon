@@ -14,6 +14,7 @@ import { CharacterService } from './services/CharacterService.js';
 import { SessionService } from './services/SessionService.js';
 import { DiceService } from './services/DiceService.js';
 import { GameLogService } from './services/GameLogService.js';
+import { CombatService } from './services/CombatService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -42,6 +43,7 @@ export function buildContainer(env: Env) {
     sessionService: asClass(SessionService).scoped(),
     diceService: asClass(DiceService).scoped(),
     gameLogService: asClass(GameLogService).scoped(),
+    combatService: asClass(CombatService).scoped(),
   });
 
   return container;

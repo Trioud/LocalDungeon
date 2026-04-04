@@ -8,6 +8,7 @@ import { useAuthStore } from '@/lib/stores/authStore';
 import PlayerList from '@/components/session/PlayerList';
 import DiceRoller from '@/components/dice/DiceRoller';
 import GameLog from '@/components/gamelog/GameLog';
+import CombatTracker from '@/components/combat/CombatTracker';
 
 function PhaseBadge({ phase }: { phase: string }) {
   if (phase === 'combat') return <span className="text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-800">⚔️ Combat</span>;
@@ -21,17 +22,9 @@ function StatusBadge({ status }: { status: string }) {
   return <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-800">Ended</span>;
 }
 
-function PhaseContent({ phase }: { phase: string }) {
+function PhaseContent({ phase, sessionId }: { phase: string; sessionId: string }) {
   if (phase === 'combat') {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-red-50 rounded-xl border-2 border-dashed border-red-200 p-12 text-center">
-        <div>
-          <p className="text-4xl mb-3">⚔️</p>
-          <h2 className="text-xl font-bold text-red-800">Combat Phase</h2>
-          <p className="text-red-600 mt-2">Combat system coming in Phase 11</p>
-        </div>
-      </div>
-    );
+    return <CombatTracker sessionId={sessionId} />;
   }
   if (phase === 'social') {
     return (
@@ -157,7 +150,7 @@ export default function SessionRoomPage() {
               </div>
             </div>
           ) : (
-            <PhaseContent phase={session.phase} />
+            <PhaseContent phase={session.phase} sessionId={id} />
           )}
 
           {/* Dice Roller */}

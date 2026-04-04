@@ -5,3 +5,4 @@ export * from './types/index.js';
 export * from './rules/index.js';
 export * from './dice/index.js';
 export * from './gamelog/index.js';
+export * from './combat/index.js';

@@ -15,6 +15,7 @@ try {
     redis,
     diceService: container.cradle.diceService,
     gameLogService: container.cradle.gameLogService,
+    combatService: container.cradle.combatService,
   });
   app.log.info(`🎲 LocalDungeon API running on port ${env.PORT}`);
 } catch (err) {

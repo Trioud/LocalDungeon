@@ -4,17 +4,19 @@ import { Redis } from 'ioredis';
 import { verifyToken } from '../services/jwtUtils.js';
 import type { DiceService } from '../services/DiceService.js';
 import type { GameLogService } from '../services/GameLogService.js';
-import type { DiceRollMode } from '@local-dungeon/shared';
+import type { CombatService } from '../services/CombatService.js';
+import type { DiceRollMode, ConditionName } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
   redis: Redis;
   diceService: DiceService;
   gameLogService: GameLogService;
+  combatService: CombatService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -166,6 +168,98 @@ export function createSocketServer(
 
     socket.on('disconnect', async () => {
       // Don't remove from Redis immediately — Phase 8 handles reconnect grace period
+    });
+
+    // ─── Combat Events ───────────────────────────────────────────────────────
+
+    socket.on('combat:init', async (data: { sessionId: string; combatants: any[] }) => {
+      try {
+        const state = await combatService.initCombat(data.sessionId, data.combatants);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to initialize combat' });
+      }
+    });
+
+    socket.on('combat:start', async (data: { sessionId: string }) => {
+      try {
+        const state = await combatService.startCombat(data.sessionId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to start combat' });
+      }
+    });
+
+    socket.on('combat:end', async (data: { sessionId: string }) => {
+      try {
+        const state = await combatService.endCombat(data.sessionId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to end combat' });
+      }
+    });
+
+    socket.on('combat:damage', async (data: { sessionId: string; combatantId: string; damage: number }) => {
+      try {
+        const state = await combatService.applyDamage(data.sessionId, data.combatantId, data.damage, userId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to apply damage' });
+      }
+    });
+
+    socket.on('combat:heal', async (data: { sessionId: string; combatantId: string; amount: number }) => {
+      try {
+        const state = await combatService.applyHealing(data.sessionId, data.combatantId, data.amount, userId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to apply healing' });
+      }
+    });
+
+    socket.on('combat:condition_add', async (data: { sessionId: string; combatantId: string; condition: ConditionName }) => {
+      try {
+        const state = await combatService.addCondition(data.sessionId, data.combatantId, data.condition, userId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to add condition' });
+      }
+    });
+
+    socket.on('combat:condition_remove', async (data: { sessionId: string; combatantId: string; condition: ConditionName }) => {
+      try {
+        const state = await combatService.removeCondition(data.sessionId, data.combatantId, data.condition, userId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to remove condition' });
+      }
+    });
+
+    socket.on('combat:next_turn', async (data: { sessionId: string }) => {
+      try {
+        const state = await combatService.advanceTurn(data.sessionId, userId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to advance turn' });
+      }
+    });
+
+    socket.on('combat:death_save', async (data: { sessionId: string; combatantId: string; success: boolean }) => {
+      try {
+        const state = await combatService.recordDeathSave(data.sessionId, data.combatantId, data.success, userId);
+        io.to(`session:${data.sessionId}`).emit('combat:state', state);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to record death save' });
+      }
+    });
+
+    socket.on('combat:get_state', async (data: { sessionId: string }) => {
+      try {
+        const state = await combatService.getState(data.sessionId);
+        socket.emit('combat:state', state ?? { isActive: false });
+      } catch {
+        socket.emit('game:error', { message: 'Failed to get combat state' });
+      }
     });
   });
 

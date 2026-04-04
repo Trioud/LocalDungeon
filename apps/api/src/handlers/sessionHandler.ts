@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import type { SessionService } from '../services/SessionService.js';
 import type { GameLogService } from '../services/GameLogService.js';
+import type { CombatService } from '../services/CombatService.js';
 
 const CreateSessionSchema = z.object({
   name: z.string().min(2).max(80),
@@ -94,4 +95,15 @@ export async function sessionRoutes(app: FastifyInstance): Promise<void> {
       return reply.send({ events, nextCursor });
     }
   );
+
+  app.get('/sessions/:id/combat', { preHandler: [app.authenticate] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const sessionSvc = request.diScope.resolve<SessionService>('sessionService');
+    const session = await sessionSvc.getInfo(id);
+    const isMember = session.players.some((p) => p.userId === request.user.sub);
+    if (!isMember) return reply.code(403).send({ error: 'Forbidden' });
+    const combatSvc = request.diScope.resolve<CombatService>('combatService');
+    const state = await combatSvc.getState(id);
+    return reply.send(state ?? { isActive: false });
+  });
 }
