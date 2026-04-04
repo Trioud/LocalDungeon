@@ -230,6 +230,7 @@ model Character {
   className    String   @map("class_name")
   subclassName String?  @map("subclass_name")
   level        Int      @default(1)
+  xp           Int      @default(0)
   hitDie       Int      @map("hit_die")
   currentHP    Int      @map("current_hp")
   maxHP        Int      @map("max_hp")

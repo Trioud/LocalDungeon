@@ -18,6 +18,7 @@ export interface CreateCharacterData {
   className: string;
   subclassName?: string;
   level: number;
+  xp?: number;
   hitDie: number;
   currentHP: number;
   maxHP: number;

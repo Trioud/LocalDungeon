@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import type { CharacterService } from '../services/CharacterService.js';
+import type { LevelUpService } from '../services/LevelUpService.js';
 
 const CreateCharacterSchema = z.object({
   name: z.string().min(2).max(50),
@@ -24,6 +25,34 @@ const CreateCharacterSchema = z.object({
 });
 
 const UpdateCharacterSchema = CreateCharacterSchema.partial();
+
+const AwardXPSchema = z.object({
+  xp: z.number().int().min(1),
+});
+
+const ASIChoiceSchema = z.union([
+  z.object({
+    type: z.literal('asi'),
+    ability1: z.enum(['str', 'dex', 'con', 'int', 'wis', 'cha']),
+    ability2: z.enum(['str', 'dex', 'con', 'int', 'wis', 'cha']).optional(),
+  }),
+  z.object({
+    type: z.literal('feat'),
+    featName: z.string(),
+  }),
+]);
+
+const LevelUpChoiceSchema = z.object({
+  classToLevel: z.string(),
+  hpRoll: z.number().int().min(1).optional(),
+  asiChoice: ASIChoiceSchema.optional(),
+  subclassChoice: z.string().optional(),
+  newSpellsLearned: z.array(z.string()).optional(),
+});
+
+const LevelUpBodySchema = z.object({
+  choice: LevelUpChoiceSchema,
+});
 
 export async function characterRoutes(app: FastifyInstance): Promise<void> {
   app.post(
@@ -78,6 +107,45 @@ export async function characterRoutes(app: FastifyInstance): Promise<void> {
       const svc = request.diScope.resolve<CharacterService>('characterService');
       await svc.delete(id, request.user.sub);
       return reply.code(204).send();
+    }
+  );
+
+  app.post(
+    '/characters/:id/award-xp',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const { xp } = AwardXPSchema.parse(request.body);
+      const svc = request.diScope.resolve<LevelUpService>('levelUpService');
+      const result = await svc.awardXP(id, xp);
+      return reply.send(result);
+    }
+  );
+
+  app.get(
+    '/characters/:id/level-up-preview',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const { class: classToLevel } = request.query as { class?: string };
+      if (!classToLevel) {
+        return reply.code(400).send({ error: 'Query param "class" is required' });
+      }
+      const svc = request.diScope.resolve<LevelUpService>('levelUpService');
+      const preview = await svc.previewLevelUp(id, classToLevel);
+      return reply.send(preview);
+    }
+  );
+
+  app.post(
+    '/characters/:id/level-up',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const { choice } = LevelUpBodySchema.parse(request.body);
+      const svc = request.diScope.resolve<LevelUpService>('levelUpService');
+      const character = await svc.confirmLevelUp(id, choice);
+      return reply.send(character);
     }
   );
 }
