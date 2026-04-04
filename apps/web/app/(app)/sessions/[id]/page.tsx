@@ -7,6 +7,7 @@ import { useDiceRoller } from '@/lib/hooks/useDiceRoller';
 import { useAuthStore } from '@/lib/stores/authStore';
 import PlayerList from '@/components/session/PlayerList';
 import DiceRoller from '@/components/dice/DiceRoller';
+import GameLog from '@/components/gamelog/GameLog';
 
 function PhaseBadge({ phase }: { phase: string }) {
   if (phase === 'combat') return <span className="text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-800">⚔️ Combat</span>;
@@ -161,6 +162,14 @@ export default function SessionRoomPage() {
 
           {/* Dice Roller */}
           <DiceRoller onRoll={roll} recentRolls={rolls} />
+
+          {/* Game Log */}
+          <div className="h-80">
+            <GameLog
+              sessionId={id}
+              characterName={session.players.find((p) => p.userId === user?.id)?.characterName}
+            />
+          </div>
         </div>
 
         {/* Player sidebar */}

@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import type { SessionService } from '../services/SessionService.js';
+import type { GameLogService } from '../services/GameLogService.js';
 
 const CreateSessionSchema = z.object({
   name: z.string().min(2).max(80),
@@ -64,6 +65,33 @@ export async function sessionRoutes(app: FastifyInstance): Promise<void> {
       const svc = request.diScope.resolve<SessionService>('sessionService');
       await svc.leave(request.user.sub, id);
       return reply.code(204).send();
+    }
+  );
+
+  const GameLogQuerySchema = z.object({
+    limit: z.coerce.number().int().min(1).max(100).optional().default(50),
+    before: z.string().optional(),
+  });
+
+  app.get(
+    '/sessions/:id/log',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const { limit, before } = GameLogQuerySchema.parse(request.query);
+
+      const sessionSvc = request.diScope.resolve<SessionService>('sessionService');
+      const session = await sessionSvc.getInfo(id);
+      const isMember = session.players.some((p) => p.userId === request.user.sub);
+      if (!isMember) {
+        return reply.code(403).send({ error: 'Forbidden' });
+      }
+
+      const logSvc = request.diScope.resolve<GameLogService>('gameLogService');
+      const events = await logSvc.listEvents(id, { limit, before });
+      const nextCursor = events.length === limit ? events[events.length - 1]?.id : undefined;
+
+      return reply.send({ events, nextCursor });
     }
   );
 }

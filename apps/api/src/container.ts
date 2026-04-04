@@ -13,6 +13,7 @@ import { GameDataService } from './services/GameDataService.js';
 import { CharacterService } from './services/CharacterService.js';
 import { SessionService } from './services/SessionService.js';
 import { DiceService } from './services/DiceService.js';
+import { GameLogService } from './services/GameLogService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -40,6 +41,7 @@ export function buildContainer(env: Env) {
     redisSessionStore: asClass(RedisSessionStore).scoped(),
     sessionService: asClass(SessionService).scoped(),
     diceService: asClass(DiceService).scoped(),
+    gameLogService: asClass(GameLogService).scoped(),
   });
 
   return container;

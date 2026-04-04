@@ -52,4 +52,28 @@ export class PrismaGameEventRepository implements IGameEventRepository {
       createdAt: row.createdAt,
     }));
   }
+
+  async listBySession(
+    sessionId: string,
+    opts?: { limit?: number; before?: string },
+  ): Promise<GameEventRecord[]> {
+    const limit = opts?.limit ?? 50;
+    const rows = await this.prisma.gameEvent.findMany({
+      where: {
+        sessionId,
+        ...(opts?.before ? { id: { lt: opts.before } } : {}),
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+
+    return rows.map((row) => ({
+      id: row.id,
+      sessionId: row.sessionId,
+      userId: row.userId,
+      type: row.type,
+      payload: row.payload,
+      createdAt: row.createdAt,
+    }));
+  }
 }
