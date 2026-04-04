@@ -11,6 +11,7 @@ import type { ClassFeatureService } from '../services/ClassFeatureService.js';
 import type { InspirationService } from '../services/InspirationService.js';
 import type { STTService } from '../services/STTService.js';
 import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult } from '@local-dungeon/shared';
+import { parseVoiceCommand } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
   redis: Redis;
@@ -190,10 +191,24 @@ export function createSocketServer(
     socket.on('voice:start', async () => {
       if (!currentSessionId) return socket.emit('game:error', { message: 'Not in a session' });
       try {
+        const emitToSocket = (event: string, data: unknown) => {
+          socket.emit(event as any, data);
+          if (
+            event === 'voice:transcript' &&
+            typeof data === 'object' && data !== null &&
+            (data as any).isFinal === true
+          ) {
+            const text: string = (data as any).text ?? '';
+            const command = parseVoiceCommand(text, { knownSpells: [], sessionPlayerNames: [] });
+            if (command.confidence >= 0.3 && command.intent !== 'chat') {
+              socket.emit('command:parsed', { command });
+            }
+          }
+        };
         await sttService.startListening(
           socket.id,
           currentSessionId,
-          (event, data) => socket.emit(event as any, data),
+          emitToSocket,
           (event, data) => io.to(`session:${currentSessionId}`).emit(event as any, data),
         );
         socket.emit('voice:started', {});
