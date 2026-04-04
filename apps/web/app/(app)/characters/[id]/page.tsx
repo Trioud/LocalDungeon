@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import InlineEdit from '@/components/ui/InlineEdit';
 import { useCharacter, usePatchCharacter } from '@/lib/hooks/useCharacter';
 import type { Character } from '@/lib/api/characters';
+import CharacterAvatar from '@/components/portrait/CharacterAvatar';
+import PortraitUploader from '@/components/portrait/PortraitUploader';
 
 const SPELLCASTER_CLASSES = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'];
 
@@ -56,11 +58,18 @@ export default function CharacterSheetPage() {
   const { mutate: patch, isPending } = usePatchCharacter(id);
   const [activeTab, setActiveTab] = useState<Tab>('stats');
   const [toast, setToast] = useState<{ type: 'error' | 'success'; message: string } | null>(null);
+  const [portraitUrl, setPortraitUrl] = useState<string | null | undefined>(undefined);
 
   const showError = (msg: string) => {
     setToast({ type: 'error', message: msg });
     setTimeout(() => setToast(null), 3000);
   };
+
+  const handlePortraitSuccess = useCallback((url: string) => {
+    setPortraitUrl(url);
+    setToast({ type: 'success', message: 'Portrait updated!' });
+    setTimeout(() => setToast(null), 3000);
+  }, []);
 
   const safePatch = (p: Partial<Character>) =>
     new Promise<void>((resolve, reject) => {
@@ -119,13 +128,13 @@ export default function CharacterSheetPage() {
       <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
         <div className="flex gap-5 items-start flex-wrap">
           {/* Portrait */}
-          <div className="w-20 h-20 rounded-full bg-gray-600 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0 overflow-hidden">
-            {character.portraitUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={character.portraitUrl} alt={character.name} className="w-full h-full object-cover" />
-            ) : (
-              character.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-            )}
+          <div className="flex flex-col items-center gap-2">
+            <CharacterAvatar
+              portraitUrl={portraitUrl !== undefined ? portraitUrl : character.portraitUrl}
+              name={character.name}
+              size="xl"
+            />
+            <PortraitUploader characterId={id} onSuccess={handlePortraitSuccess} />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">

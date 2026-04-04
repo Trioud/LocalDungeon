@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
+import multipart from '@fastify/multipart';
 import type { AwilixContainer } from 'awilix';
 import type { Env } from './env.js';
 import { buildContainer } from './container.js';
@@ -34,6 +35,8 @@ export async function buildApp(env: Env) {
     max: 100,
     timeWindow: '1 minute',
   });
+
+  await app.register(multipart, { limits: { fileSize: 6 * 1024 * 1024 } });
 
   await app.register(authenticatePlugin, { jwtSecret: env.JWT_ACCESS_SECRET });
 

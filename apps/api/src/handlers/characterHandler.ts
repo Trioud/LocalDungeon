@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import type { CharacterService } from '../services/CharacterService.js';
 import type { LevelUpService } from '../services/LevelUpService.js';
+import type { PortraitService } from '../services/PortraitService.js';
 
 const CreateCharacterSchema = z.object({
   name: z.string().min(2).max(50),
@@ -146,6 +147,49 @@ export async function characterRoutes(app: FastifyInstance): Promise<void> {
       const svc = request.diScope.resolve<LevelUpService>('levelUpService');
       const character = await svc.confirmLevelUp(id, choice);
       return reply.send(character);
+    }
+  );
+
+  app.post(
+    '/characters/:id/portrait',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const data = await request.file();
+      if (!data) {
+        return reply.code(400).send({ error: 'No file uploaded' });
+      }
+      const buffer = await data.toBuffer();
+      const mimeType = data.mimetype;
+      const svc = request.diScope.resolve<PortraitService>('portraitService');
+      const portraitUrl = await svc.uploadPortrait(id, buffer, mimeType, request.user.sub);
+      return reply.send({ portraitUrl });
+    }
+  );
+
+  app.get(
+    '/characters/:id/portrait-upload-url',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const { mimeType } = request.query as { mimeType?: string };
+      if (!mimeType) {
+        return reply.code(400).send({ error: 'Query param "mimeType" is required' });
+      }
+      const svc = request.diScope.resolve<PortraitService>('portraitService');
+      const result = await svc.getPresignedUrl(id, mimeType, request.user.sub);
+      return reply.send(result);
+    }
+  );
+
+  app.delete(
+    '/characters/:id/portrait',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const svc = request.diScope.resolve<PortraitService>('portraitService');
+      await svc.deletePortrait(id, request.user.sub);
+      return reply.code(204).send();
     }
   );
 }

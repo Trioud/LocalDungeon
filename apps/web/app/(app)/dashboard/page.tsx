@@ -6,11 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useCharacterList, useDeleteCharacter } from '@/lib/hooks/useCharacter';
 import type { Character } from '@/lib/api/characters';
-
-function getInitials(name: string) {
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-}
-
+import CharacterAvatar from '@/components/portrait/CharacterAvatar';
 function HPBar({ current, max }: { current: number; max: number }) {
   const pct = max > 0 ? Math.min(100, Math.round((current / max) * 100)) : 0;
   const color = pct > 50 ? 'bg-green-500' : pct > 25 ? 'bg-yellow-500' : 'bg-red-500';
@@ -85,9 +81,7 @@ export default function DashboardPage() {
             characters.map((char: Character) => (
               <div key={char.id} className="bg-gray-800 rounded-lg p-5 border border-gray-700 hover:border-yellow-400/40 transition-colors flex flex-col gap-3">
                 <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                    {getInitials(char.name)}
-                  </div>
+                  <CharacterAvatar portraitUrl={char.portraitUrl} name={char.name} size="md" />
                   <div className="flex-1 min-w-0">
                     <Link href={`/characters/${char.id}`} className="font-bold text-white hover:text-yellow-400 transition-colors block truncate">
                       {char.name}

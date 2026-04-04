@@ -37,6 +37,7 @@ export interface CombatantState {
   maxHitDice?: number;
   conModifier?: number;
   resources?: ClassResource[];
+  portraitUrl?: string | null;
 }
 
 export interface CombatState {

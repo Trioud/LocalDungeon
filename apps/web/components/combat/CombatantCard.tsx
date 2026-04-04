@@ -6,6 +6,7 @@ import DeathSaveTracker from './DeathSaveTracker';
 import SpellSlotTracker from '../spellcasting/SpellSlotTracker';
 import ConcentrationBadge from '../spellcasting/ConcentrationBadge';
 import QuickUsePanel from '../features/QuickUsePanel';
+import CharacterAvatar from '../portrait/CharacterAvatar';
 
 const ALL_CONDITIONS: ConditionName[] = [
   'blinded', 'charmed', 'deafened', 'exhaustion', 'frightened', 'grappled',
@@ -69,6 +70,7 @@ export default function CombatantCard({
       }`}
     >
       <div className="flex items-center gap-2">
+        <CharacterAvatar portraitUrl={combatant.portraitUrl} name={combatant.name} size="sm" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold text-sm truncate">{combatant.name}</span>
