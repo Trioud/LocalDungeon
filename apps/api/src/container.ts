@@ -12,6 +12,7 @@ import { AuthService } from './services/AuthService.js';
 import { GameDataService } from './services/GameDataService.js';
 import { CharacterService } from './services/CharacterService.js';
 import { SessionService } from './services/SessionService.js';
+import { DiceService } from './services/DiceService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -38,6 +39,7 @@ export function buildContainer(env: Env) {
     gameEventRepository: asClass(PrismaGameEventRepository).scoped(),
     redisSessionStore: asClass(RedisSessionStore).scoped(),
     sessionService: asClass(SessionService).scoped(),
+    diceService: asClass(DiceService).scoped(),
   });
 
   return container;

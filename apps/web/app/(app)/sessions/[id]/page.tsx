@@ -3,8 +3,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useSessionInfo, useLeaveSession } from '@/lib/hooks/useSession';
 import { useSessionSocket } from '@/lib/hooks/useSessionSocket';
+import { useDiceRoller } from '@/lib/hooks/useDiceRoller';
 import { useAuthStore } from '@/lib/stores/authStore';
 import PlayerList from '@/components/session/PlayerList';
+import DiceRoller from '@/components/dice/DiceRoller';
 
 function PhaseBadge({ phase }: { phase: string }) {
   if (phase === 'combat') return <span className="text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-800">⚔️ Combat</span>;
@@ -59,6 +61,7 @@ export default function SessionRoomPage() {
 
   const { data: session, isLoading } = useSessionInfo(id);
   const { connectedUserIds } = useSessionSocket(id);
+  const { rolls, roll } = useDiceRoller(id);
   const leaveSession = useLeaveSession();
   const user = useAuthStore((s) => s.user);
   const [copied, setCopied] = useState(false);
@@ -155,6 +158,9 @@ export default function SessionRoomPage() {
           ) : (
             <PhaseContent phase={session.phase} />
           )}
+
+          {/* Dice Roller */}
+          <DiceRoller onRoll={roll} recentRolls={rolls} />
         </div>
 
         {/* Player sidebar */}
