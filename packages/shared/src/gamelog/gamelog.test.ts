@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { formatLogEntry } from './narrative.js';
-import type { GameLogEntry } from './types.js';
+import { formatLogEntry } from './narrative';
+import type { GameLogEntry } from './types';
 
 function makeEntry(overrides: Partial<GameLogEntry>): GameLogEntry {
   return {

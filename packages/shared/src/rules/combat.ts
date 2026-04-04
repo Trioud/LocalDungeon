@@ -1,4 +1,4 @@
-import { computeAbilityModifier } from './abilityScores.js';
+import { computeAbilityModifier } from './abilityScores';
 
 export function computeMaxHP(hitDie: number, conScore: number, level: number): number {
   const conMod = computeAbilityModifier(conScore);

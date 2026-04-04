@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseNotation, rollDice } from './index.js';
+import { parseNotation, rollDice } from './index';
 
 const fixedRng = () => 0.5; // produces Math.floor(0.5 * sides) + 1
 

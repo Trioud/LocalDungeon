@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { computeAbilityModifier } from './abilityScores.js';
-import { computeProficiencyBonus } from './proficiency.js';
-import { computeMaxHP, computeAC } from './combat.js';
-import { computeSpellSaveDC } from './spellcasting.js';
-import { computeSkillModifier, computePassivePerception } from './skills.js';
+import { computeAbilityModifier } from './abilityScores';
+import { computeProficiencyBonus } from './proficiency';
+import { computeMaxHP, computeAC } from './combat';
+import { computeSpellSaveDC } from './spellcasting';
+import { computeSkillModifier, computePassivePerception } from './skills';
 
 describe('computeAbilityModifier', () => {
   it.each([

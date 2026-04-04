@@ -3,8 +3,8 @@ import {
   sortInitiative, applyDamage, applyHealing, applyTempHp,
   addCondition, removeCondition, advanceTurn, resetActionsForTurn,
   useAction, applyExhaustion, recordDeathSave, startCombat, endCombat,
-} from './index.js';
-import type { CombatantState, CombatState } from './index.js';
+} from './index';
+import type { CombatantState, CombatState } from './index';
 
 function makeCombatant(overrides: Partial<CombatantState> = {}): CombatantState {
   return {

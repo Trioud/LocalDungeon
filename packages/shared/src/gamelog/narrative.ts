@@ -1,4 +1,4 @@
-import type { GameLogEntry } from './types.js';
+import type { GameLogEntry } from './types';
 
 export function formatLogEntry(entry: GameLogEntry): string {
   const actor = entry.actorName ?? 'Unknown';

@@ -1,4 +1,4 @@
-import { computeProficiencyBonus } from './proficiency.js';
+import { computeProficiencyBonus } from './proficiency';
 
 export interface SkillModifierInput {
   abilityModifier: number;
