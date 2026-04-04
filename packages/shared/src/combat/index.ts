@@ -1,4 +1,5 @@
 import type { SpellcastingState } from '../spellcasting/types';
+import type { ClassResource } from '../features/types';
 
 // Types
 export type ActionType = 'action' | 'bonus_action' | 'reaction' | 'free_action';
@@ -35,6 +36,7 @@ export interface CombatantState {
   hitDiceRemaining?: number;
   maxHitDice?: number;
   conModifier?: number;
+  resources?: ClassResource[];
 }
 
 export interface CombatState {

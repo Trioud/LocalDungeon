@@ -7,6 +7,7 @@ import type { GameLogService } from '../services/GameLogService.js';
 import type { CombatService } from '../services/CombatService.js';
 import type { SpellcastingService } from '../services/SpellcastingService.js';
 import type { RestService } from '../services/RestService.js';
+import type { ClassFeatureService } from '../services/ClassFeatureService.js';
 import type { DiceRollMode, ConditionName, CastSpellParams, RestType } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
@@ -16,11 +17,12 @@ interface SocketServerDeps {
   combatService: CombatService;
   spellcastingService: SpellcastingService;
   restService: RestService;
+  classFeatureService: ClassFeatureService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService, combatService, spellcastingService, restService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -393,6 +395,46 @@ export function createSocketServer(
         socket.emit('game:error', { message: err?.message ?? 'Failed to spend hit dice' });
       }
     });
+
+    // ─── Class Feature Events ─────────────────────────────────────────────────
+
+    socket.on(
+      'feature:use_resource',
+      async (data: { sessionId: string; combatantId: string; resourceId: string; amount?: number }) => {
+        try {
+          const resources = await classFeatureService.useResource(
+            data.sessionId,
+            data.combatantId,
+            data.resourceId,
+            data.amount,
+          );
+          io.to(`session:${data.sessionId}`).emit('feature:resource_used', {
+            combatantId: data.combatantId,
+            resourceId: data.resourceId,
+            resources,
+          });
+        } catch (err: any) {
+          socket.emit('game:error', { message: err?.message ?? 'Failed to use resource' });
+        }
+      },
+    );
+
+    socket.on(
+      'feature:init_resources',
+      async (data: { sessionId: string; combatantId: string; classLevels: Record<string, number>; profBonus: number }) => {
+        try {
+          const resources = await classFeatureService.initResources(
+            data.sessionId,
+            data.combatantId,
+            data.classLevels,
+            data.profBonus,
+          );
+          socket.emit('feature:resources_initialized', { combatantId: data.combatantId, resources });
+        } catch {
+          socket.emit('game:error', { message: 'Failed to initialize resources' });
+        }
+      },
+    );
   });
 
   return io;

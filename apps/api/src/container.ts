@@ -18,6 +18,7 @@ import { CombatService } from './services/CombatService.js';
 import { SpellcastingService } from './services/SpellcastingService.js';
 import { RestService } from './services/RestService.js';
 import { LevelUpService } from './services/LevelUpService.js';
+import { ClassFeatureService } from './services/ClassFeatureService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -50,6 +51,7 @@ export function buildContainer(env: Env) {
     spellcastingService: asClass(SpellcastingService).scoped(),
     restService: asClass(RestService).scoped(),
     levelUpService: asClass(LevelUpService).scoped(),
+    classFeatureService: asClass(ClassFeatureService).scoped(),
   });
 
   return container;

@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
-import type { CombatantState, ConditionName } from '@local-dungeon/shared';
+import type { CombatantState, ConditionName, ClassResource } from '@local-dungeon/shared';
 import ConditionBadge from './ConditionBadge';
 import DeathSaveTracker from './DeathSaveTracker';
 import SpellSlotTracker from '../spellcasting/SpellSlotTracker';
 import ConcentrationBadge from '../spellcasting/ConcentrationBadge';
+import QuickUsePanel from '../features/QuickUsePanel';
 
 const ALL_CONDITIONS: ConditionName[] = [
   'blinded', 'charmed', 'deafened', 'exhaustion', 'frightened', 'grappled',
@@ -20,6 +21,8 @@ interface CombatantCardProps {
   onAddCondition: (id: string, condition: ConditionName) => void;
   onRemoveCondition: (id: string, condition: ConditionName) => void;
   onEndConcentration?: (id: string) => void;
+  resources?: ClassResource[];
+  onUseResource?: (combatantId: string, resourceId: string) => void;
 }
 
 export default function CombatantCard({
@@ -30,6 +33,8 @@ export default function CombatantCard({
   onAddCondition,
   onRemoveCondition,
   onEndConcentration,
+  resources,
+  onUseResource,
 }: CombatantCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [damageInput, setDamageInput] = useState('');
@@ -109,6 +114,11 @@ export default function CombatantCard({
           aria-label="HP bar"
         />
       </div>
+
+      {/* Quick resource use panel */}
+      {resources && resources.length > 0 && onUseResource && (
+        <QuickUsePanel resources={resources} onUse={(id) => onUseResource(combatant.id, id)} />
+      )}
 
       {/* Conditions */}
       {combatant.conditions.length > 0 && (

@@ -1,5 +1,6 @@
 import type { CombatantState } from '../combat/index';
 import { recoverSlots } from '../spellcasting/index';
+import { rechargeResources } from '../features/features';
 import type { RestProposal, RestType } from './types';
 
 export function computeHPRecovery(
@@ -48,6 +49,10 @@ export function applyLongRestFeatures(state: CombatantState): CombatantState {
     );
   }
 
+  if (updated.resources) {
+    updated.resources = rechargeResources(updated.resources, 'long');
+  }
+
   return updated;
 }
 
@@ -56,6 +61,10 @@ export function applyShortRestFeatures(state: CombatantState): CombatantState {
 
   if (updated.spellcasting) {
     updated.spellcasting = recoverSlots(updated.spellcasting, 'short');
+  }
+
+  if (updated.resources) {
+    updated.resources = rechargeResources(updated.resources, 'short');
   }
 
   return updated;
