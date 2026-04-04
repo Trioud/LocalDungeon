@@ -5,18 +5,20 @@ import { verifyToken } from '../services/jwtUtils.js';
 import type { DiceService } from '../services/DiceService.js';
 import type { GameLogService } from '../services/GameLogService.js';
 import type { CombatService } from '../services/CombatService.js';
-import type { DiceRollMode, ConditionName } from '@local-dungeon/shared';
+import type { SpellcastingService } from '../services/SpellcastingService.js';
+import type { DiceRollMode, ConditionName, CastSpellParams } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
   redis: Redis;
   diceService: DiceService;
   gameLogService: GameLogService;
   combatService: CombatService;
+  spellcastingService: SpellcastingService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService, combatService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService, spellcastingService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -302,6 +304,42 @@ export function createSocketServer(
         });
       } catch {
         socket.emit('game:error', { message: 'Failed to stabilize combatant' });
+      }
+    });
+
+    // ─── Spellcasting Events ─────────────────────────────────────────────────
+
+    socket.on('spell:cast', async (data: { sessionId: string; combatantId: string; params: CastSpellParams }) => {
+      try {
+        const combatant = await spellcastingService.castSpell(data.sessionId, data.combatantId, data.params);
+        io.to(`session:${data.sessionId}`).emit('spell:cast_result', { combatant });
+        await gameLogService.logEvent({
+          sessionId: data.sessionId,
+          type: 'system',
+          actorId: userId,
+          actorName: username,
+          payload: { message: `${combatant.name} cast ${data.params.spellName}` },
+        });
+      } catch (err: any) {
+        socket.emit('game:error', { message: err?.message ?? 'Failed to cast spell' });
+      }
+    });
+
+    socket.on('spell:end_concentration', async (data: { sessionId: string; combatantId: string }) => {
+      try {
+        const combatant = await spellcastingService.endConcentration(data.sessionId, data.combatantId);
+        io.to(`session:${data.sessionId}`).emit('spell:concentration_ended', { combatant });
+      } catch {
+        socket.emit('game:error', { message: 'Failed to end concentration' });
+      }
+    });
+
+    socket.on('spell:concentration_save', async (data: { sessionId: string; combatantId: string; roll: number; damage: number }) => {
+      try {
+        const result = await spellcastingService.concentrationSave(data.sessionId, data.combatantId, data.roll, data.damage);
+        socket.emit('spell:concentration_save_result', result);
+      } catch {
+        socket.emit('game:error', { message: 'Failed to process concentration save' });
       }
     });
   });

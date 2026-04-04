@@ -16,6 +16,7 @@ try {
     diceService: container.cradle.diceService,
     gameLogService: container.cradle.gameLogService,
     combatService: container.cradle.combatService,
+    spellcastingService: container.cradle.spellcastingService,
   });
   app.log.info(`🎲 LocalDungeon API running on port ${env.PORT}`);
 } catch (err) {

@@ -3,6 +3,8 @@ import { useState } from 'react';
 import type { CombatantState, ConditionName } from '@local-dungeon/shared';
 import ConditionBadge from './ConditionBadge';
 import DeathSaveTracker from './DeathSaveTracker';
+import SpellSlotTracker from '../spellcasting/SpellSlotTracker';
+import ConcentrationBadge from '../spellcasting/ConcentrationBadge';
 
 const ALL_CONDITIONS: ConditionName[] = [
   'blinded', 'charmed', 'deafened', 'exhaustion', 'frightened', 'grappled',
@@ -17,6 +19,7 @@ interface CombatantCardProps {
   onHeal: (id: string, amount: number) => void;
   onAddCondition: (id: string, condition: ConditionName) => void;
   onRemoveCondition: (id: string, condition: ConditionName) => void;
+  onEndConcentration?: (id: string) => void;
 }
 
 export default function CombatantCard({
@@ -26,6 +29,7 @@ export default function CombatantCard({
   onHeal,
   onAddCondition,
   onRemoveCondition,
+  onEndConcentration,
 }: CombatantCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [damageInput, setDamageInput] = useState('');
@@ -66,9 +70,14 @@ export default function CombatantCard({
             {combatant.isBloodied && (
               <span className="text-xs text-red-600 font-medium">🩸 Bloodied</span>
             )}
-            {combatant.isConcentrating && (
+            {combatant.isConcentrating && combatant.concentrationSpell ? (
+              <ConcentrationBadge
+                spellName={combatant.concentrationSpell}
+                onEndConcentration={() => onEndConcentration?.(combatant.id)}
+              />
+            ) : combatant.isConcentrating ? (
               <span className="text-xs text-purple-600 font-medium">🔮 Conc.</span>
-            )}
+            ) : null}
           </div>
           <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
             <span>Init: {combatant.initiative}</span>
@@ -181,6 +190,11 @@ export default function CombatantCard({
               + Add
             </button>
           </div>
+
+          {/* Spell slot tracker */}
+          {combatant.spellcasting && (
+            <SpellSlotTracker spellcasting={combatant.spellcasting} />
+          )}
         </div>
       )}
     </div>

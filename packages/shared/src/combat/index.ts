@@ -1,3 +1,5 @@
+import type { SpellcastingState } from '../spellcasting/types';
+
 // Types
 export type ActionType = 'action' | 'bonus_action' | 'reaction' | 'free_action';
 
@@ -20,6 +22,7 @@ export interface CombatantState {
   isBloodied: boolean;
   isConcentrating: boolean;
   concentrationSpell?: string;
+  spellcasting?: SpellcastingState;
   hasAction: boolean;
   hasBonusAction: boolean;
   hasReaction: boolean;
