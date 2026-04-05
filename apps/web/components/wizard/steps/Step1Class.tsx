@@ -9,9 +9,9 @@ interface ClassData {
   description: string;
   primaryAbility: string;
   savingThrows: string[];
-  skillChoices: string[];
-  skillCount: number;
-  features: Array<{ name: string; description: string }>;
+  skillChoices: number;
+  skillOptions: string[];
+  features: Array<{ level: number; name: string; description: string }>;
   spellcasting: { ability: string } | null;
 }
 
@@ -78,19 +78,19 @@ export default function Step1Class() {
                     <span className="text-white">{cls.savingThrows.join(', ')}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400">Skills (choose {cls.skillCount}): </span>
-                    <span className="text-white">{cls.skillChoices.join(', ')}</span>
+                    <span className="text-gray-400">Skills (choose {cls.skillChoices}): </span>
+                    <span className="text-white">{cls.skillOptions.join(', ')}</span>
                   </div>
                   {cls.spellcasting && (
                     <div>
                       <span className="text-purple-400">✨ Spellcasting ({cls.spellcasting.ability.toUpperCase()})</span>
                     </div>
                   )}
-                  {cls.features.length > 0 && (
+                  {cls.features.filter((f) => f.level === 1).length > 0 && (
                     <div>
                       <p className="text-gray-400 mb-1">Level 1 Features:</p>
                       <ul className="space-y-1">
-                        {cls.features.map((f) => (
+                        {cls.features.filter((f) => f.level === 1).map((f) => (
                           <li key={f.name} className="text-white">• {f.name}</li>
                         ))}
                       </ul>
