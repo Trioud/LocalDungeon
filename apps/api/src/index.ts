@@ -23,6 +23,7 @@ try {
     sttService: container.cradle.sttService,
     weaponMasteryService: container.cradle.weaponMasteryService,
     consensusService: container.cradle.consensusService,
+    readyActionService: container.cradle.readyActionService,
   });
   app.log.info(`🎲 LocalDungeon API running on port ${env.PORT}`);
 } catch (err) {

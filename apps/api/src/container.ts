@@ -28,6 +28,7 @@ import { ClassFeatureService } from './services/ClassFeatureService.js';
 import { InspirationService } from './services/InspirationService.js';
 import { WeaponMasteryService } from './services/WeaponMasteryService.js';
 import { ConsensusService } from './services/ConsensusService.js';
+import { ReadyActionService } from './services/ReadyActionService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -83,6 +84,7 @@ export function buildContainer(env: Env) {
     inspirationService: asClass(InspirationService).scoped(),
     weaponMasteryService: asClass(WeaponMasteryService).scoped(),
     consensusService: asClass(ConsensusService).scoped(),
+    readyActionService: asClass(ReadyActionService).scoped(),
     sttProvider: asValue(sttProvider),
     sttService: asClass(STTService).scoped(),
   });

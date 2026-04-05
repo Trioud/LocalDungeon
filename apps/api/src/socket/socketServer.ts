@@ -12,8 +12,9 @@ import type { InspirationService } from '../services/InspirationService.js';
 import type { STTService } from '../services/STTService.js';
 import type { WeaponMasteryService } from '../services/WeaponMasteryService.js';
 import type { ConsensusService } from '../services/ConsensusService.js';
+import type { ReadyActionService } from '../services/ReadyActionService.js';
 import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult, WebRTCSignal, MasteryProperty, VoteChoice, ProposalCategory } from '@local-dungeon/shared';
-import { parseVoiceCommand } from '@local-dungeon/shared';
+import { parseVoiceCommand, canTakeOpportunityAttack, isReadyActionExpired } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
   redis: Redis;
@@ -27,11 +28,12 @@ interface SocketServerDeps {
   sttService: STTService;
   weaponMasteryService: WeaponMasteryService;
   consensusService: ConsensusService;
+  readyActionService: ReadyActionService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService, sttService, weaponMasteryService, consensusService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService, sttService, weaponMasteryService, consensusService, readyActionService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -363,10 +365,62 @@ export function createSocketServer(
 
     socket.on('combat:next_turn', async (data: { sessionId: string }) => {
       try {
+        const prevState = await combatService.getState(data.sessionId);
         const state = await combatService.advanceTurn(data.sessionId, userId);
+        if (prevState) {
+          const activeCombatant = prevState.combatants.find((c) => c.isActive);
+          if (activeCombatant) {
+            const readyAction = await readyActionService.getReadyAction(data.sessionId, activeCombatant.id);
+            if (readyAction && isReadyActionExpired(readyAction, state.round)) {
+              await readyActionService.clearReadyAction(data.sessionId, activeCombatant.id);
+            }
+          }
+        }
         io.to(`session:${data.sessionId}`).emit('combat:state', state);
       } catch {
         socket.emit('game:error', { message: 'Failed to advance turn' });
+      }
+    });
+
+    socket.on('combat:ready_action_set', async (data: { sessionId: string; combatantId: string; trigger: string; actionDescription: string; expiresOnTurn: number }) => {
+      try {
+        const readyAction = await readyActionService.setReadyAction(data.sessionId, data.combatantId, data.trigger, data.actionDescription, data.expiresOnTurn);
+        io.to(`session:${data.sessionId}`).emit('combat:ready_action_updated', { combatantId: data.combatantId, readyAction });
+      } catch {
+        socket.emit('combat:error', { message: 'Failed to set ready action' });
+      }
+    });
+
+    socket.on('combat:ready_action_fire', async (data: { sessionId: string; combatantId: string }) => {
+      try {
+        const action = await readyActionService.fireReadyAction(data.sessionId, data.combatantId);
+        io.to(`session:${data.sessionId}`).emit('combat:ready_action_fired', { combatantId: data.combatantId, action });
+      } catch {
+        socket.emit('combat:error', { message: 'Failed to fire ready action' });
+      }
+    });
+
+    socket.on('combat:opportunity_attack', async (data: { sessionId: string; attackerId: string; targetId: string }) => {
+      try {
+        const combatState = await combatService.getState(data.sessionId);
+        if (!combatState) {
+          socket.emit('combat:error', { message: 'No active combat' });
+          return;
+        }
+        const attacker = combatState.combatants.find(c => c.id === data.attackerId);
+        const target = combatState.combatants.find(c => c.id === data.targetId);
+        if (!attacker || !target) {
+          socket.emit('combat:error', { message: 'Combatant not found' });
+          return;
+        }
+        if (!canTakeOpportunityAttack(attacker, target)) {
+          socket.emit('combat:error', { message: 'Cannot take opportunity attack' });
+          return;
+        }
+        const attack = await readyActionService.recordOpportunityAttack(data.sessionId, data.attackerId, data.targetId);
+        io.to(`session:${data.sessionId}`).emit('combat:opportunity_attack_triggered', { attack });
+      } catch {
+        socket.emit('combat:error', { message: 'Failed to process opportunity attack' });
       }
     });
 
