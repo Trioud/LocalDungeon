@@ -27,6 +27,7 @@ import { LevelUpService } from './services/LevelUpService.js';
 import { ClassFeatureService } from './services/ClassFeatureService.js';
 import { InspirationService } from './services/InspirationService.js';
 import { WeaponMasteryService } from './services/WeaponMasteryService.js';
+import { ConsensusService } from './services/ConsensusService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -81,6 +82,7 @@ export function buildContainer(env: Env) {
     classFeatureService: asClass(ClassFeatureService).scoped(),
     inspirationService: asClass(InspirationService).scoped(),
     weaponMasteryService: asClass(WeaponMasteryService).scoped(),
+    consensusService: asClass(ConsensusService).scoped(),
     sttProvider: asValue(sttProvider),
     sttService: asClass(STTService).scoped(),
   });

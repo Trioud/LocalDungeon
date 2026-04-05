@@ -11,7 +11,8 @@ import type { ClassFeatureService } from '../services/ClassFeatureService.js';
 import type { InspirationService } from '../services/InspirationService.js';
 import type { STTService } from '../services/STTService.js';
 import type { WeaponMasteryService } from '../services/WeaponMasteryService.js';
-import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult, WebRTCSignal, MasteryProperty } from '@local-dungeon/shared';
+import type { ConsensusService } from '../services/ConsensusService.js';
+import type { DiceRollMode, ConditionName, CastSpellParams, RestType, DiceResult, WebRTCSignal, MasteryProperty, VoteChoice, ProposalCategory } from '@local-dungeon/shared';
 import { parseVoiceCommand } from '@local-dungeon/shared';
 
 interface SocketServerDeps {
@@ -25,11 +26,12 @@ interface SocketServerDeps {
   inspirationService: InspirationService;
   sttService: STTService;
   weaponMasteryService: WeaponMasteryService;
+  consensusService: ConsensusService;
 }
 
 export function createSocketServer(
   httpServer: unknown,
-  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService, sttService, weaponMasteryService }: SocketServerDeps,
+  { redis, diceService, gameLogService, combatService, spellcastingService, restService, classFeatureService, inspirationService, sttService, weaponMasteryService, consensusService }: SocketServerDeps,
 ) {
   const io = new SocketIOServer(httpServer as any, {
     cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:3000', credentials: true },
@@ -645,6 +647,55 @@ export function createSocketServer(
         }
       },
     );
+
+    // ─── Consensus Events ─────────────────────────────────────────────────────
+
+    socket.on(
+      'consensus:propose',
+      async (data: { sessionId: string; category: ProposalCategory; description: string; payload?: unknown }) => {
+        try {
+          const requiredVoters = await redis.smembers(`session:${data.sessionId}:players`);
+          const proposal = await consensusService.createProposal(
+            data.sessionId,
+            userId,
+            data.category,
+            data.description,
+            requiredVoters,
+            data.payload,
+          );
+          io.to(`session:${data.sessionId}`).emit('consensus:new_proposal', proposal);
+        } catch (err: any) {
+          socket.emit('game:error', { message: err?.message ?? 'Failed to create proposal' });
+        }
+      },
+    );
+
+    socket.on(
+      'consensus:vote',
+      async (data: { sessionId: string; proposalId: string; choice: VoteChoice }) => {
+        try {
+          const updated = await consensusService.castVote(data.sessionId, data.proposalId, userId, data.choice);
+          io.to(`session:${data.sessionId}`).emit('consensus:vote_update', updated);
+          if (updated.status === 'passed' || updated.status === 'rejected') {
+            io.to(`session:${data.sessionId}`).emit('consensus:resolved', {
+              proposal: updated,
+              autoExecute: updated.status === 'passed' && updated.payload != null,
+            });
+          }
+        } catch (err: any) {
+          socket.emit('game:error', { message: err?.message ?? 'Failed to cast vote' });
+        }
+      },
+    );
+
+    socket.on('consensus:fetch', async (data: { sessionId: string }) => {
+      try {
+        const proposals = await consensusService.getActiveProposals(data.sessionId);
+        socket.emit('consensus:active_proposals', { proposals });
+      } catch (err: any) {
+        socket.emit('game:error', { message: err?.message ?? 'Failed to fetch proposals' });
+      }
+    });
   });
 
   return io;

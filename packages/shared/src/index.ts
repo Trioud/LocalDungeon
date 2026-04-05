@@ -11,3 +11,4 @@ export * from './stt/index';
 export * from './nlp/index';
 export * from './webrtc/index';
 export * from './weaponmastery/index';
+export * from './consensus/index';
