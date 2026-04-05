@@ -19,7 +19,7 @@ describe('GET /health', () => {
     const app = await buildApp(testEnv);
     const response = await app.inject({ method: 'GET', url: '/health' });
     expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual({ status: 'ok' });
+    expect(response.json()).toMatchObject({ status: 'ok' });
     await app.close();
   });
 });

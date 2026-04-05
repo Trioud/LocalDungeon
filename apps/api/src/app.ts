@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import multipart from '@fastify/multipart';
 import type { AwilixContainer } from 'awilix';
@@ -26,6 +27,8 @@ export async function buildApp(env: Env) {
   });
 
   const container = buildContainer(env);
+
+  await app.register(helmet);
 
   await app.register(cors, {
     origin: env.CORS_ORIGIN,
@@ -55,8 +58,22 @@ export async function buildApp(env: Env) {
   await app.register(sessionRoutes);
   await app.register(sessionLogRoutes);
 
-  app.get('/health', async () => {
-    return { status: 'ok' };
+  app.get('/health', async (_request, reply) => {
+    const redis = container.cradle.redis;
+    let redisOk = true;
+    if (redis.status === 'ready') {
+      try {
+        await redis.ping();
+      } catch {
+        redisOk = false;
+      }
+    }
+    const status = redisOk ? 'ok' : 'degraded';
+    return reply.code(redisOk ? 200 : 503).send({
+      status,
+      timestamp: Date.now(),
+      services: { redis: redisOk ? 'ok' : 'error', api: 'ok' },
+    });
   });
 
   app.setErrorHandler((error, _request, reply) => {

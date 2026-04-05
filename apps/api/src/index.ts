@@ -2,6 +2,7 @@ import { loadEnv } from './env.js';
 import { buildApp } from './app.js';
 import { buildContainer } from './container.js';
 import { createSocketServer } from './socket/socketServer.js';
+import { registerGracefulShutdown } from './shutdown.js';
 
 const env = loadEnv();
 
@@ -11,7 +12,7 @@ const redis = container.cradle.redis;
 
 try {
   await app.listen({ port: env.PORT, host: '0.0.0.0' });
-  createSocketServer(app.server, {
+  const io = createSocketServer(app.server, {
     redis,
     diceService: container.cradle.diceService,
     gameLogService: container.cradle.gameLogService,
@@ -25,6 +26,7 @@ try {
     consensusService: container.cradle.consensusService,
     readyActionService: container.cradle.readyActionService,
   });
+  registerGracefulShutdown(app, io);
   app.log.info(`🎲 LocalDungeon API running on port ${env.PORT}`);
 } catch (err) {
   app.log.error(err);

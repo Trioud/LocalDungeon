@@ -58,6 +58,17 @@ export function createSocketServer(
   });
 
   io.on('connection', (socket) => {
+    // Enforce max 1000 concurrent connections
+    if (io.sockets.sockets.size > 1000) {
+      socket.emit('error', { message: 'Server at capacity' });
+      socket.disconnect(true);
+      return;
+    }
+
+    socket.on('error', (err) => {
+      console.error(`Socket error [${socket.id}]:`, err.message);
+    });
+
     const userId = (socket as any).userId as string;
     const username = (socket as any).username as string;
     let currentSessionId: string | null = null;

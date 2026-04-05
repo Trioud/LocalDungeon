@@ -2,9 +2,11 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import type { SessionLogExportService } from '../services/SessionLogExportService.js';
 
 export async function sessionLogRoutes(app: FastifyInstance): Promise<void> {
+  const exportRateLimit = { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } };
+
   app.get(
     '/sessions/:sessionId/export/text',
-    { preHandler: [app.authenticate] },
+    { preHandler: [app.authenticate], ...exportRateLimit },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { sessionId } = request.params as { sessionId: string };
       const { characters } = request.query as { characters?: string };
@@ -20,7 +22,7 @@ export async function sessionLogRoutes(app: FastifyInstance): Promise<void> {
 
   app.get(
     '/sessions/:sessionId/export/markdown',
-    { preHandler: [app.authenticate] },
+    { preHandler: [app.authenticate], ...exportRateLimit },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { sessionId } = request.params as { sessionId: string };
       const { characters } = request.query as { characters?: string };
@@ -36,7 +38,7 @@ export async function sessionLogRoutes(app: FastifyInstance): Promise<void> {
 
   app.get(
     '/sessions/:sessionId/export/json',
-    { preHandler: [app.authenticate] },
+    { preHandler: [app.authenticate], ...exportRateLimit },
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { sessionId } = request.params as { sessionId: string };
       const { characters } = request.query as { characters?: string };
