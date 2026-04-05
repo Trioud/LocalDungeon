@@ -60,7 +60,7 @@ model Species {
   id          String   @id @default(cuid())
   name        String   @unique
   description String
-  size        String
+  size        String[]
   speed       Int
   traits      Json
   createdAt   DateTime @default(now()) @map("created_at")
@@ -126,7 +126,7 @@ model Weapon {
   damageType String   @map("damage_type")
   properties String[]
   mastery    String?
-  weight     Float
+  weight     Float?
   cost       String
   createdAt  DateTime @default(now()) @map("created_at")
 
