@@ -18,7 +18,16 @@ export async function POST(request: NextRequest) {
   const data = await apiRes.json();
 
   if (!apiRes.ok) {
-    return NextResponse.json(data, { status: apiRes.status });
+    // Clear the stale cookie so the middleware stops the redirect loop
+    const errResponse = NextResponse.json(data, { status: apiRes.status });
+    errResponse.cookies.set('refresh_token', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
+    return errResponse;
   }
 
   const { accessToken, user } = data;

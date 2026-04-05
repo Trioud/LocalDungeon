@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useRouter } from 'next/navigation';
@@ -16,20 +16,30 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   );
   const { user, setAuth, clearAuth } = useAuthStore();
   const router = useRouter();
-  const [restoring, setRestoring] = useState(!user);
 
-  // Restore session from refresh_token cookie on mount (prevents auth flash on reload)
+  // Start restoring only if we have no user in memory yet.
+  // useRef guard prevents React 18 StrictMode from double-firing the effect
+  // and sending two concurrent refresh requests.
+  const [restoring, setRestoring] = useState(!user);
+  const didFetch = useRef(false);
+
   useEffect(() => {
     if (user) {
       setRestoring(false);
       return;
     }
+    // Guard: only one fetch per mount (StrictMode fires effects twice in dev)
+    if (didFetch.current) return;
+    didFetch.current = true;
+
     fetch('/api/auth/refresh', { method: 'POST' })
       .then(async (res) => {
         if (res.ok) {
           const data = await res.json();
           setAuth(data.user, data.accessToken);
         } else {
+          // Cookie already cleared by the route handler — just redirect.
+          // Middleware will allow /login through because the cookie is gone.
           clearAuth();
           router.replace('/login');
         }
@@ -56,10 +66,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (restoring) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4 text-gray-400">
-          <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm">Restoring session…</span>
-        </div>
+        <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
