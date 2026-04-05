@@ -63,6 +63,7 @@ export function buildContainer(env: Env) {
     prisma: asValue(prisma),
     redis: asValue(redis),
     fileStorage: asValue(fileStorage),
+    rng: asValue(Math.random),
     userRepository: asClass(PrismaUserRepository).scoped(),
     sessionStateStore: asClass(RedisSessionStateStore).scoped(),
     authService: asClass(AuthService).scoped(),
