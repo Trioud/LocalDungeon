@@ -10,6 +10,7 @@ import { authRoutes } from './handlers/authHandler.js';
 import { gameDataRoutes } from './handlers/gameDataHandler.js';
 import { characterRoutes } from './handlers/characterHandler.js';
 import { sessionRoutes } from './handlers/sessionHandler.js';
+import { sessionLogRoutes } from './handlers/sessionLogHandler.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -52,6 +53,7 @@ export async function buildApp(env: Env) {
   await app.register(gameDataRoutes);
   await app.register(characterRoutes);
   await app.register(sessionRoutes);
+  await app.register(sessionLogRoutes);
 
   app.get('/health', async () => {
     return { status: 'ok' };

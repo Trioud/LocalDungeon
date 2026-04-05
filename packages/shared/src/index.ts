@@ -13,3 +13,4 @@ export * from './webrtc/index';
 export * from './weaponmastery/index';
 export * from './consensus/index';
 export * from './readyaction/index';
+export * from './sessionlog/index';

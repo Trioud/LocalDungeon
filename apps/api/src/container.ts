@@ -29,6 +29,7 @@ import { InspirationService } from './services/InspirationService.js';
 import { WeaponMasteryService } from './services/WeaponMasteryService.js';
 import { ConsensusService } from './services/ConsensusService.js';
 import { ReadyActionService } from './services/ReadyActionService.js';
+import { SessionLogExportService } from './services/SessionLogExportService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -85,6 +86,7 @@ export function buildContainer(env: Env) {
     weaponMasteryService: asClass(WeaponMasteryService).scoped(),
     consensusService: asClass(ConsensusService).scoped(),
     readyActionService: asClass(ReadyActionService).scoped(),
+    sessionLogExportService: asClass(SessionLogExportService).scoped(),
     sttProvider: asValue(sttProvider),
     sttService: asClass(STTService).scoped(),
   });
