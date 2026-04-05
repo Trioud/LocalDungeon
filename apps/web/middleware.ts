@@ -2,14 +2,23 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   const refreshToken = request.cookies.get('refresh_token');
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || 
-                      request.nextUrl.pathname.startsWith('/register');
-  const isApiRoute = request.nextUrl.pathname.startsWith('/api');
-  const isAppRoute = request.nextUrl.pathname.startsWith('/dashboard') ||
-                     request.nextUrl.pathname.startsWith('/character') ||
-                     request.nextUrl.pathname.startsWith('/session');
-  
+
+  const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/register');
+  const isAppRoute =
+    pathname === '/' ||
+    pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/characters') ||
+    pathname.startsWith('/session');
+
+  // Root path: send to dashboard if logged in, login if not
+  if (pathname === '/') {
+    return NextResponse.redirect(
+      new URL(refreshToken ? '/dashboard' : '/login', request.url)
+    );
+  }
+
   if (isAppRoute && !refreshToken) {
     return NextResponse.redirect(new URL('/login', request.url));
   }

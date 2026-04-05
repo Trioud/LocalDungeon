@@ -76,7 +76,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async refresh(refreshToken: string): Promise<{ accessToken: string }> {
+  async refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string; user: { id: string; username: string; email: string } }> {
     let payload: { sub: string };
     try {
       payload = verifyToken(refreshToken, this.env.JWT_REFRESH_SECRET);
@@ -98,7 +98,11 @@ export class AuthService {
     );
     await this.sessionStateStore.deleteRefreshToken(user.id);
     await this.sessionStateStore.setRefreshToken(user.id, newRefreshToken, REFRESH_TOKEN_TTL);
-    return { accessToken };
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
+      user: { id: user.id, username: user.username, email: user.email },
+    };
   }
 
   async logout(userId: string): Promise<void> {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useRouter } from 'next/navigation';
@@ -14,8 +14,33 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         },
       })
   );
-  const { user, clearAuth } = useAuthStore();
+  const { user, setAuth, clearAuth } = useAuthStore();
   const router = useRouter();
+  const [restoring, setRestoring] = useState(!user);
+
+  // Restore session from refresh_token cookie on mount (prevents auth flash on reload)
+  useEffect(() => {
+    if (user) {
+      setRestoring(false);
+      return;
+    }
+    fetch('/api/auth/refresh', { method: 'POST' })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+          setAuth(data.user, data.accessToken);
+        } else {
+          clearAuth();
+          router.replace('/login');
+        }
+      })
+      .catch(() => {
+        clearAuth();
+        router.replace('/login');
+      })
+      .finally(() => setRestoring(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogout = async () => {
     const accessToken = useAuthStore.getState().accessToken;
@@ -27,6 +52,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     clearAuth();
     router.push('/login');
   };
+
+  if (restoring) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-gray-400">
+          <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm">Restoring session…</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
