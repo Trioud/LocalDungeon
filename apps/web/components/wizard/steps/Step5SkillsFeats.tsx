@@ -20,8 +20,8 @@ export default function Step5SkillsFeats() {
   const bgFeatName: string = selectedBg?.feat ?? '';
   const bgFeat = feats?.find((f: { name: string }) => f.name === bgFeatName);
   const bgSkills: string[] = selectedBg?.skillProficiencies ?? [];
-  const classSkillChoices: string[] = selectedClass?.skillChoices ?? ALL_SKILLS;
-  const maxSkills: number = selectedClass?.skillCount ?? 2;
+  const classSkillChoices: string[] = selectedClass?.skillOptions ?? ALL_SKILLS;
+  const maxSkills: number = selectedClass?.skillChoices ?? 2;
   const selectedSkills: string[] = wizardData.skillProficiencies ?? [];
 
   const availableClassSkills = classSkillChoices.filter(s => !bgSkills.includes(s));
