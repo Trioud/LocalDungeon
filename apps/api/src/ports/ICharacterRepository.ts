@@ -31,6 +31,8 @@ export interface CreateCharacterData {
   features: unknown[];
   feats: string[];
   inventory: Record<string, unknown>;
+  classLevels?: Record<string, number>;
+  totalLevel?: number;
 }
 
 export type UpdateCharacterData = Partial<CreateCharacterData>;

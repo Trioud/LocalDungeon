@@ -1,40 +1,48 @@
 'use client';
 import { useState } from 'react';
 import type { LevelUpPreview, LevelUpChoice, ASIChoice } from '@local-dungeon/shared';
-import { checkMulticlassPrereqs } from '@local-dungeon/shared';
+import { checkMulticlassPrereqs, getMulticlassProficiencyGrants, isNewClass } from '@local-dungeon/shared';
 import ASIPanel from './ASIPanel';
+import MulticlassProficiencyAlert from './MulticlassProficiencyAlert';
 
 const STEP_LABELS = ['Class', 'Hit Points', 'ASI / Feat', 'Subclass', 'Summary'] as const;
+
+const ALL_CLASSES = [
+  'Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter',
+  'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard',
+];
 
 interface LevelUpWizardProps {
   characterId: string;
   className: string;
   abilityScores: Record<string, number>;
+  classLevels?: Record<string, number>;
   preview: LevelUpPreview | null;
   onConfirm: (choice: LevelUpChoice) => Promise<void>;
   onClose: () => void;
 }
 
 export default function LevelUpWizard({
-  characterId,
+  characterId: _characterId,
   className,
   abilityScores,
+  classLevels,
   preview,
   onConfirm,
   onClose,
 }: LevelUpWizardProps) {
   const [step, setStep] = useState(0);
   const [classToLevel, setClassToLevel] = useState(className);
-  const [multiclassInput, setMulticlassInput] = useState('');
   const [useAverage, setUseAverage] = useState(true);
   const [hpRoll, setHpRoll] = useState<number | undefined>(undefined);
   const [asiChoice, setAsiChoice] = useState<ASIChoice | undefined>(undefined);
   const [subclassChoice, setSubclassChoice] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const prereqCheck = multiclassInput
-    ? checkMulticlassPrereqs(abilityScores as any, multiclassInput)
-    : { allowed: true };
+  const currentLevels = classLevels ?? { [className]: 1 };
+  const selectedIsNew = isNewClass(currentLevels, classToLevel);
+  const prereqCheck = checkMulticlassPrereqs(abilityScores as any, classToLevel);
+  const grants = selectedIsNew ? getMulticlassProficiencyGrants(classToLevel) : null;
 
   const effectivePreview = preview;
   const showASIStep = effectivePreview?.gainsASI ?? false;
@@ -78,6 +86,8 @@ export default function LevelUpWizard({
     }
   };
 
+  const totalLevelAfter = Object.values(currentLevels).reduce((s, v) => s + v, 0) + 1;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden">
@@ -108,43 +118,50 @@ export default function LevelUpWizard({
         {/* Step content */}
         <div className="px-6 py-5 min-h-[200px]">
           {steps[step] === 'Class' && (
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-600 mb-2">
-                  Leveling up <strong>{className}</strong> (current class)
-                </p>
-                <button
-                  onClick={() => setClassToLevel(className)}
-                  className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-colors ${
-                    classToLevel === className && !multiclassInput
-                      ? 'border-amber-500 bg-amber-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <span className="font-medium">{className}</span>
-                  <span className="text-sm text-gray-500 ml-2">(continue current class)</span>
-                </button>
+            <div className="space-y-3">
+              <p className="text-sm text-gray-600 mb-2">Choose a class to level up:</p>
+              <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1">
+                {ALL_CLASSES.map((cls) => {
+                  const existing = currentLevels[cls];
+                  const prereq = checkMulticlassPrereqs(abilityScores as any, cls);
+                  const isCurrent = cls === classToLevel;
+                  const isCurrentClass = !!existing;
+                  const prereqFails = !isCurrentClass && !prereq.allowed;
+                  return (
+                    <button
+                      key={cls}
+                      onClick={() => {
+                        if (!prereqFails) setClassToLevel(cls);
+                      }}
+                      disabled={prereqFails}
+                      className={`text-left px-3 py-2 rounded-lg border-2 transition-colors text-sm ${
+                        isCurrent
+                          ? 'border-amber-500 bg-amber-50'
+                          : prereqFails
+                          ? 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <span className="font-medium">{cls}</span>
+                      {isCurrentClass && (
+                        <span className="text-xs text-amber-600 ml-1">Lv {existing}</span>
+                      )}
+                      {!isCurrentClass && !prereqFails && (
+                        <span className="text-xs text-blue-500 ml-1">new</span>
+                      )}
+                      {prereqFails && (
+                        <span className="block text-xs text-red-400 truncate">{prereq.reason}</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Or multiclass into:</p>
-                <input
-                  type="text"
-                  value={multiclassInput}
-                  onChange={(e) => {
-                    setMulticlassInput(e.target.value);
-                    if (e.target.value.trim()) setClassToLevel(e.target.value.trim());
-                    else setClassToLevel(className);
-                  }}
-                  placeholder="e.g. Rogue, Wizard..."
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              {selectedIsNew && grants && grants.proficiencies.length > 0 && (
+                <MulticlassProficiencyAlert
+                  className={classToLevel}
+                  proficiencies={grants.proficiencies}
                 />
-                {multiclassInput && !prereqCheck.allowed && (
-                  <p className="mt-1 text-xs text-red-600">⚠ {prereqCheck.reason}</p>
-                )}
-                {multiclassInput && prereqCheck.allowed && (
-                  <p className="mt-1 text-xs text-green-600">✓ Prerequisites met</p>
-                )}
-              </div>
+              )}
             </div>
           )}
 
@@ -216,9 +233,10 @@ export default function LevelUpWizard({
               <ul className="space-y-1 text-gray-700">
                 <li>
                   <span className="font-medium">Class leveled:</span> {classToLevel}
+                  {selectedIsNew && <span className="ml-1 text-blue-600 text-xs">(new class!)</span>}
                 </li>
                 <li>
-                  <span className="font-medium">New total level:</span> {effectivePreview.newLevel}
+                  <span className="font-medium">Total level after:</span> {totalLevelAfter}
                 </li>
                 <li>
                   <span className="font-medium">HP gain:</span>{' '}
@@ -227,6 +245,12 @@ export default function LevelUpWizard({
                 <li>
                   <span className="font-medium">Proficiency bonus:</span> +{effectivePreview.newProficiencyBonus}
                 </li>
+                {selectedIsNew && grants && grants.proficiencies.length > 0 && (
+                  <li>
+                    <span className="font-medium">New proficiencies:</span>{' '}
+                    {grants.proficiencies.join(', ')}
+                  </li>
+                )}
                 {showASIStep && asiChoice && (
                   <li>
                     <span className="font-medium">ASI / Feat:</span>{' '}
@@ -278,3 +302,4 @@ export default function LevelUpWizard({
     </div>
   );
 }
+

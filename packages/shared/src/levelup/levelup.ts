@@ -1,5 +1,5 @@
 import type { SpellSlotState } from '../spellcasting';
-import { XP_THRESHOLDS, type LevelUpPreview, type LevelUpCharacter } from './types';
+import { XP_THRESHOLDS, type LevelUpPreview, type LevelUpCharacter, type MulticlassGrant } from './types';
 import { computeAbilityModifier } from '../rules/abilityScores';
 import type { AbilityScores } from '../rules/abilityScores';
 
@@ -192,4 +192,71 @@ export function previewLevelUp(character: LevelUpCharacter, classToLevel: string
     newSpellSlots: newSpellSlots.length > 0 ? newSpellSlots : undefined,
     features: [],
   };
+}
+
+export function getMulticlassProficiencyGrants(className: string): MulticlassGrant {
+  const cls = className.toLowerCase();
+  switch (cls) {
+    case 'barbarian':
+      return { proficiencies: ['Light Armor', 'Medium Armor', 'Shields', 'Simple Weapons', 'Martial Weapons'] };
+    case 'bard':
+      return { proficiencies: ['Light Armor', 'one skill of your choice', 'one musical instrument of your choice'] };
+    case 'cleric':
+      return { proficiencies: ['Light Armor', 'Medium Armor', 'Shields'] };
+    case 'druid':
+      return { proficiencies: ['Light Armor', 'Medium Armor', 'Shields (not metal)', 'Simple Weapons'] };
+    case 'fighter':
+      return { proficiencies: ['Light Armor', 'Medium Armor', 'Shields', 'Simple Weapons', 'Martial Weapons'] };
+    case 'monk':
+      return { proficiencies: ['Simple Weapons', 'Shortswords'] };
+    case 'paladin':
+      return { proficiencies: ['Light Armor', 'Medium Armor', 'Shields', 'Simple Weapons', 'Martial Weapons'] };
+    case 'ranger':
+      return { proficiencies: ['Light Armor', 'Medium Armor', 'Shields', 'Simple Weapons', 'Martial Weapons', 'one skill from the Ranger skill list'] };
+    case 'rogue':
+      return { proficiencies: ['Light Armor', 'one skill from the Rogue skill list', "Thieves' Tools"] };
+    case 'sorcerer':
+      return { proficiencies: [] };
+    case 'warlock':
+      return { proficiencies: ['Light Armor', 'Simple Weapons'] };
+    case 'wizard':
+      return { proficiencies: [] };
+    default:
+      return { proficiencies: [] };
+  }
+}
+
+export function computeTotalLevel(classLevels: Record<string, number>): number {
+  return Object.values(classLevels).reduce((sum, lvl) => sum + lvl, 0);
+}
+
+export function computeMulticlassSpellSlots(classLevels: Record<string, number>): SpellSlotState[] {
+  return computeNewSpellSlots(classLevels);
+}
+
+export function isNewClass(classLevels: Record<string, number>, className: string): boolean {
+  return !(className in classLevels);
+}
+
+export interface ValidateMulticlassResult {
+  valid: boolean;
+  reason?: string;
+}
+
+export function validateMulticlassChoice(
+  abilityScores: AbilityScores,
+  currentClassLevels: Record<string, number>,
+  targetClass: string,
+): ValidateMulticlassResult {
+  const prereq = checkMulticlassPrereqs(abilityScores, targetClass);
+  if (!prereq.allowed) {
+    return { valid: false, reason: prereq.reason };
+  }
+
+  const existingLevel = currentClassLevels[targetClass] ?? currentClassLevels[targetClass.toLowerCase()];
+  if (existingLevel !== undefined && existingLevel >= 20) {
+    return { valid: false, reason: `${targetClass} is already at maximum level` };
+  }
+
+  return { valid: true };
 }

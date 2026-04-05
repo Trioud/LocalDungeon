@@ -4,9 +4,11 @@ import { useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import InlineEdit from '@/components/ui/InlineEdit';
 import { useCharacter, usePatchCharacter } from '@/lib/hooks/useCharacter';
+import { useMulticlass } from '@/lib/hooks/useMulticlass';
 import type { Character } from '@/lib/api/characters';
 import CharacterAvatar from '@/components/portrait/CharacterAvatar';
 import PortraitUploader from '@/components/portrait/PortraitUploader';
+import ClassLevelDisplay from '@/components/levelup/ClassLevelDisplay';
 
 const SPELLCASTER_CLASSES = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'];
 
@@ -56,6 +58,7 @@ export default function CharacterSheetPage() {
   const id = String(params.id);
   const { data: character, isLoading, error } = useCharacter(id);
   const { mutate: patch, isPending } = usePatchCharacter(id);
+  const { classLevels } = useMulticlass(id);
   const [activeTab, setActiveTab] = useState<Tab>('stats');
   const [toast, setToast] = useState<{ type: 'error' | 'success'; message: string } | null>(null);
   const [portraitUrl, setPortraitUrl] = useState<string | null | undefined>(undefined);
@@ -152,9 +155,15 @@ export default function CharacterSheetPage() {
               </button>
             </div>
             <div className="mt-1 flex items-center gap-2 flex-wrap">
-              <span className="text-yellow-300 font-medium">{character.className}</span>
-              {character.subclassName && <span className="text-yellow-300/70">({character.subclassName})</span>}
-              <span className="bg-yellow-400/20 text-yellow-300 text-xs px-2 py-0.5 rounded">Level {character.level}</span>
+              {classLevels && Object.keys(classLevels).length > 1 ? (
+                <ClassLevelDisplay classLevels={classLevels} className="text-yellow-300" />
+              ) : (
+                <>
+                  <span className="text-yellow-300 font-medium">{character.className}</span>
+                  {character.subclassName && <span className="text-yellow-300/70">({character.subclassName})</span>}
+                  <span className="bg-yellow-400/20 text-yellow-300 text-xs px-2 py-0.5 rounded">Level {character.level}</span>
+                </>
+              )}
             </div>
             <div className="mt-1 text-gray-400 text-sm flex gap-3 flex-wrap">
               <span>{character.backgroundName}</span>

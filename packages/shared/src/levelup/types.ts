@@ -46,6 +46,8 @@ export interface LevelUpPreview {
   newProficiencyBonus: number;
   newSpellSlots?: SpellSlotState[];
   features: string[];
+  isNewClass?: boolean;
+  multiclassGrants?: MulticlassGrant;
 }
 
 export interface LevelUpCharacter {
@@ -56,3 +58,27 @@ export interface LevelUpCharacter {
   xp?: number;
   subclassName?: string;
 }
+
+export interface MulticlassGrant {
+  proficiencies: string[];
+  savingThrows?: string[];
+}
+
+export type ClassSpellcastingType = 'full' | 'half' | 'third' | 'none' | 'pact';
+
+export const CASTER_TYPE: Record<string, ClassSpellcastingType> = {
+  Bard: 'full',
+  Cleric: 'full',
+  Druid: 'full',
+  Sorcerer: 'full',
+  Wizard: 'full',
+  Paladin: 'half',
+  Ranger: 'half',
+  'Eldritch Knight': 'third',
+  'Arcane Trickster': 'third',
+  Warlock: 'pact',
+  Barbarian: 'none',
+  Fighter: 'none',
+  Monk: 'none',
+  Rogue: 'none',
+};

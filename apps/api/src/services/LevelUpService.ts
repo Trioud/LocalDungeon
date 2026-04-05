@@ -6,6 +6,9 @@ import {
   isASILevel,
   isSubclassLevel,
   computeAbilityModifier,
+  getMulticlassProficiencyGrants,
+  computeTotalLevel,
+  isNewClass,
 } from '@local-dungeon/shared';
 import type { LevelUpPreview, LevelUpChoice } from '@local-dungeon/shared';
 import type { ICharacterRepository, Character } from '../ports/ICharacterRepository.js';
@@ -22,7 +25,19 @@ export class LevelUpService {
   }
 
   getClassLevels(character: Character): Record<string, number> {
+    if (character.classLevels && Object.keys(character.classLevels).length > 0) {
+      return { ...character.classLevels };
+    }
     return { [character.className]: character.level };
+  }
+
+  async fetchClassLevels(characterId: string): Promise<{ classLevels: Record<string, number>; totalLevel: number }> {
+    const character = await this.characterRepository.findById(characterId);
+    if (!character) {
+      throw Object.assign(new Error('Character not found'), { statusCode: 404 });
+    }
+    const classLevels = this.getClassLevels(character);
+    return { classLevels, totalLevel: computeTotalLevel(classLevels) };
   }
 
   async awardXP(
@@ -51,7 +66,11 @@ export class LevelUpService {
       throw Object.assign(new Error('Character not found'), { statusCode: 404 });
     }
 
-    return previewLevelUp(
+    const currentClassLevels = this.getClassLevels(character);
+    const newClass = isNewClass(currentClassLevels, classToLevel);
+    const grants = newClass ? getMulticlassProficiencyGrants(classToLevel) : undefined;
+
+    const preview = previewLevelUp(
       {
         className: character.className,
         level: character.level,
@@ -62,6 +81,12 @@ export class LevelUpService {
       },
       classToLevel,
     );
+
+    return {
+      ...preview,
+      isNewClass: newClass,
+      multiclassGrants: grants,
+    };
   }
 
   async confirmLevelUp(characterId: string, choice: LevelUpChoice): Promise<Character> {
@@ -71,10 +96,21 @@ export class LevelUpService {
     }
 
     const { classToLevel, hpRoll, asiChoice, subclassChoice } = choice;
+    const currentClassLevels = this.getClassLevels(character);
+    const newClass = isNewClass(currentClassLevels, classToLevel);
     const isMainClass = classToLevel.toLowerCase() === character.className.toLowerCase();
-    const newClassLevel = character.level + (isMainClass ? 1 : 0);
+    const currentClassLevel = currentClassLevels[classToLevel] ?? 0;
+    const newClassLevel = currentClassLevel + 1;
 
-    // HP gain
+    if (newClass) {
+      const grants = getMulticlassProficiencyGrants(classToLevel);
+      if (grants.proficiencies.length > 0) {
+        // Log proficiency grants — UI handles display
+        console.info(`[LevelUp] New class ${classToLevel}: grants ${grants.proficiencies.join(', ')}`);
+      }
+    }
+
+    // HP gain — use new class's hit die if it's a new class
     const abilityScores = character.abilityScores as Record<string, number>;
     const conMod = computeAbilityModifier(abilityScores['con'] ?? 10);
     const hpGain =
@@ -102,16 +138,20 @@ export class LevelUpService {
       // feat: no direct stat change here — feat name stored in feats array
     }
 
-    // Spell slots
-    const newClassLevels = this.getClassLevels(character);
-    if (isMainClass) newClassLevels[character.className] = newClassLevel;
-    const newSpellSlots = computeNewSpellSlots(newClassLevels);
+    // Update classLevels JSON
+    const updatedClassLevels = { ...currentClassLevels, [classToLevel]: newClassLevel };
+    const newTotalLevel = computeTotalLevel(updatedClassLevels);
+
+    // Spell slots — recompute from all class levels
+    const newSpellSlots = computeNewSpellSlots(updatedClassLevels);
 
     const patch: Partial<Character> = {
       level: isMainClass ? newClassLevel : character.level,
       maxHP: newMaxHP,
       currentHP: newCurrentHP,
       abilityScores: newAbilityScores,
+      classLevels: updatedClassLevels,
+      totalLevel: newTotalLevel,
       ...(subclassChoice &&
         isSubclassLevel(classToLevel, newClassLevel) && { subclassName: subclassChoice }),
       ...(asiChoice?.type === 'feat' && {

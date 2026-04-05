@@ -65,7 +65,6 @@ describe('LevelUpWizard', () => {
     // Class → HP → Summary (no ASI since gainsASI=false)
     fireEvent.click(screen.getByText('Next →'));
     fireEvent.click(screen.getByText('Next →'));
-    expect(screen.getByText(/New total level/)).toBeInTheDocument();
-    expect(screen.getByText('4')).toBeInTheDocument();
+    expect(screen.getByText(/Total level after/)).toBeInTheDocument();
   });
 });

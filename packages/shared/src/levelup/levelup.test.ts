@@ -10,6 +10,11 @@ import {
   computeNewSpellSlots,
   hpGainAverage,
   previewLevelUp,
+  getMulticlassProficiencyGrants,
+  computeTotalLevel,
+  computeMulticlassSpellSlots,
+  isNewClass,
+  validateMulticlassChoice,
 } from './levelup';
 
 const baseScores = { str: 16, dex: 14, con: 14, int: 10, wis: 12, cha: 8 };
@@ -202,5 +207,146 @@ describe('previewLevelUp', () => {
   it('does not gain subclass if already has one', () => {
     const preview = previewLevelUp({ ...baseCharacter, subclassName: 'Champion' }, 'Fighter');
     expect(preview.gainsSubclass).toBe(false);
+  });
+});
+
+describe('getMulticlassProficiencyGrants', () => {
+  it('Barbarian grants light/medium armor, shields, and weapons', () => {
+    const grants = getMulticlassProficiencyGrants('Barbarian');
+    expect(grants.proficiencies).toContain('Light Armor');
+    expect(grants.proficiencies).toContain('Medium Armor');
+    expect(grants.proficiencies).toContain('Shields');
+    expect(grants.proficiencies).toContain('Martial Weapons');
+  });
+
+  it('Sorcerer grants no proficiencies', () => {
+    const grants = getMulticlassProficiencyGrants('Sorcerer');
+    expect(grants.proficiencies).toHaveLength(0);
+  });
+
+  it('Wizard grants no proficiencies', () => {
+    const grants = getMulticlassProficiencyGrants('Wizard');
+    expect(grants.proficiencies).toHaveLength(0);
+  });
+
+  it('Rogue grants light armor, one skill, and thieves tools', () => {
+    const grants = getMulticlassProficiencyGrants('Rogue');
+    expect(grants.proficiencies).toContain('Light Armor');
+    expect(grants.proficiencies).toContain("Thieves' Tools");
+  });
+
+  it('Monk grants simple weapons and shortswords only', () => {
+    const grants = getMulticlassProficiencyGrants('Monk');
+    expect(grants.proficiencies).toContain('Simple Weapons');
+    expect(grants.proficiencies).toContain('Shortswords');
+    expect(grants.proficiencies).not.toContain('Medium Armor');
+  });
+
+  it('Warlock grants light armor and simple weapons', () => {
+    const grants = getMulticlassProficiencyGrants('Warlock');
+    expect(grants.proficiencies).toContain('Light Armor');
+    expect(grants.proficiencies).toContain('Simple Weapons');
+  });
+
+  it('Druid grants shields (not metal)', () => {
+    const grants = getMulticlassProficiencyGrants('Druid');
+    expect(grants.proficiencies).toContain('Shields (not metal)');
+  });
+
+  it('Fighter grants light and medium armor plus weapons', () => {
+    const grants = getMulticlassProficiencyGrants('Fighter');
+    expect(grants.proficiencies).toContain('Martial Weapons');
+    expect(grants.proficiencies).toContain('Shields');
+  });
+
+  it('unknown class grants empty proficiencies', () => {
+    const grants = getMulticlassProficiencyGrants('Unknown');
+    expect(grants.proficiencies).toHaveLength(0);
+  });
+
+  it('case-insensitive: bard (lowercase) works', () => {
+    const grants = getMulticlassProficiencyGrants('bard');
+    expect(grants.proficiencies).toContain('Light Armor');
+  });
+});
+
+describe('computeTotalLevel', () => {
+  it('sums levels of single class', () => {
+    expect(computeTotalLevel({ Fighter: 5 })).toBe(5);
+  });
+
+  it('sums levels of two classes', () => {
+    expect(computeTotalLevel({ Fighter: 3, Wizard: 2 })).toBe(5);
+  });
+
+  it('sums levels of three classes', () => {
+    expect(computeTotalLevel({ Fighter: 2, Wizard: 3, Rogue: 1 })).toBe(6);
+  });
+
+  it('returns 0 for empty object', () => {
+    expect(computeTotalLevel({})).toBe(0);
+  });
+});
+
+describe('isNewClass', () => {
+  it('returns true when class is not in classLevels', () => {
+    expect(isNewClass({ Fighter: 3 }, 'Wizard')).toBe(true);
+  });
+
+  it('returns false when class is in classLevels', () => {
+    expect(isNewClass({ Fighter: 3, Wizard: 2 }, 'Wizard')).toBe(false);
+  });
+
+  it('returns true for empty classLevels', () => {
+    expect(isNewClass({}, 'Barbarian')).toBe(true);
+  });
+});
+
+describe('validateMulticlassChoice', () => {
+  it('fails when STR is 10 and target is Barbarian (needs 13)', () => {
+    const scores = { str: 10, dex: 14, con: 14, int: 10, wis: 12, cha: 8 };
+    const result = validateMulticlassChoice(scores, { Fighter: 3 }, 'Barbarian');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toContain('STR');
+  });
+
+  it('succeeds when STR is 14 and target is Barbarian', () => {
+    const scores = { str: 14, dex: 14, con: 14, int: 10, wis: 12, cha: 8 };
+    const result = validateMulticlassChoice(scores, { Fighter: 3 }, 'Barbarian');
+    expect(result.valid).toBe(true);
+  });
+
+  it('fails when class is already at level 20', () => {
+    const scores = { str: 16, dex: 14, con: 14, int: 10, wis: 12, cha: 8 };
+    const result = validateMulticlassChoice(scores, { Fighter: 20 }, 'Fighter');
+    expect(result.valid).toBe(false);
+    expect(result.reason).toContain('maximum level');
+  });
+
+  it('succeeds when adding a new class with valid prereqs', () => {
+    const scores = { str: 16, dex: 14, con: 14, int: 14, wis: 12, cha: 8 };
+    const result = validateMulticlassChoice(scores, { Fighter: 3 }, 'Wizard');
+    expect(result.valid).toBe(true);
+  });
+});
+
+describe('computeMulticlassSpellSlots (alias of computeNewSpellSlots)', () => {
+  it('Fighter 5 / Wizard 3 gives level 6 caster slots (4×L1, 3×L2, 3×L3)', () => {
+    // Fighter is third-caster (EK): 5/3 = 1 caster level
+    // Wizard is full: 3 caster levels
+    // Total = 4 → MULTICLASS_SLOT_TABLE[3] = [4, 3, 0, ...]
+    const slots = computeMulticlassSpellSlots({ Fighter: 5, Wizard: 3 });
+    const l1 = slots.find((s) => s.level === 1);
+    const l2 = slots.find((s) => s.level === 2);
+    expect(l1).toBeDefined();
+    expect(l2).toBeDefined();
+    expect(l1!.total).toBe(4);
+    expect(l2!.total).toBe(3);
+  });
+
+  it('pure Wizard 6 gives slots as single full caster', () => {
+    const slots = computeMulticlassSpellSlots({ Wizard: 6 });
+    const l3 = slots.find((s) => s.level === 3);
+    expect(l3).toBeDefined();
   });
 });

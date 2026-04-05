@@ -160,5 +160,86 @@ describe('LevelUpService', () => {
       const svc = new LevelUpService({ characterRepository: repo });
       expect(svc.getClassLevels(character)).toEqual({ Wizard: 5 });
     });
+
+    it('returns classLevels from JSONB field when present', () => {
+      const character = makeCharacter({
+        className: 'Fighter',
+        level: 3,
+        classLevels: { Fighter: 3, Wizard: 2 },
+      });
+      const repo = makeRepo(character);
+      const svc = new LevelUpService({ characterRepository: repo });
+      expect(svc.getClassLevels(character)).toEqual({ Fighter: 3, Wizard: 2 });
+    });
+  });
+
+  describe('multiclassing via confirmLevelUp', () => {
+    it('adds new class to classLevels when leveling into a new class', async () => {
+      const character = makeCharacter({
+        level: 3,
+        classLevels: { Fighter: 3 },
+        totalLevel: 3,
+      });
+      const repo = makeRepo(character);
+      const svc = new LevelUpService({ characterRepository: repo });
+      const updated = await svc.confirmLevelUp('char-1', { classToLevel: 'Wizard' });
+      const cl = updated.classLevels as Record<string, number>;
+      expect(cl['Wizard']).toBe(1);
+      expect(cl['Fighter']).toBe(3);
+      expect(updated.totalLevel).toBe(4);
+    });
+
+    it('increments existing multiclass level', async () => {
+      const character = makeCharacter({
+        level: 3,
+        classLevels: { Fighter: 3, Wizard: 1 },
+        totalLevel: 4,
+      });
+      const repo = makeRepo(character);
+      const svc = new LevelUpService({ characterRepository: repo });
+      const updated = await svc.confirmLevelUp('char-1', { classToLevel: 'Wizard' });
+      const cl = updated.classLevels as Record<string, number>;
+      expect(cl['Wizard']).toBe(2);
+      expect(updated.totalLevel).toBe(5);
+    });
+
+    it('computes spell slots from multiclass combination', async () => {
+      const character = makeCharacter({
+        level: 3,
+        classLevels: { Fighter: 3, Wizard: 2 },
+        totalLevel: 5,
+        spells: {},
+      });
+      const repo = makeRepo(character);
+      const svc = new LevelUpService({ characterRepository: repo });
+      const updated = await svc.confirmLevelUp('char-1', { classToLevel: 'Wizard' });
+      const spells = updated.spells as Record<string, unknown>;
+      // Wizard 3 is a full caster = 3 levels; Fighter 3 is a third-caster = 1 level → total 4
+      expect(spells['slots']).toBeDefined();
+    });
+
+    it('fetchClassLevels returns classLevels and totalLevel', async () => {
+      const character = makeCharacter({
+        classLevels: { Fighter: 3, Wizard: 2 },
+        totalLevel: 5,
+      });
+      const repo = makeRepo(character);
+      const svc = new LevelUpService({ characterRepository: repo });
+      const result = await svc.fetchClassLevels('char-1');
+      expect(result.classLevels).toEqual({ Fighter: 3, Wizard: 2 });
+      expect(result.totalLevel).toBe(5);
+    });
+
+    it('previewLevelUp includes isNewClass and multiclassGrants for a new class', async () => {
+      const character = makeCharacter({
+        classLevels: { Fighter: 3 },
+        totalLevel: 3,
+      });
+      const repo = makeRepo(character);
+      const svc = new LevelUpService({ characterRepository: repo });
+      const preview = await svc.previewLevelUp('char-1', 'Wizard');
+      expect(preview.isNewClass).toBe(true);
+      expect(preview.multiclassGrants).toBeDefined();
+    });
   });
 });

@@ -155,6 +155,17 @@ export async function characterRoutes(app: FastifyInstance): Promise<void> {
     }
   );
 
+  app.get(
+    '/characters/:id/class-levels',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const svc = request.diScope.resolve<LevelUpService>('levelUpService');
+      const result = await svc.fetchClassLevels(id);
+      return reply.send(result);
+    }
+  );
+
   app.post(
     '/characters/:id/portrait',
     { preHandler: [app.authenticate] },

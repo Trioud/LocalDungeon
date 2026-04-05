@@ -38,6 +38,8 @@ function mapToCharacter(row: any): Character {
     portraitUrl: row.portraitUrl,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    classLevels: row.classLevels as Record<string, number> | undefined ?? undefined,
+    totalLevel: row.totalLevel ?? undefined,
   };
 }
 
@@ -125,6 +127,8 @@ export class PrismaCharacterRepository implements ICharacterRepository {
         ...(patch.features !== undefined && { features: patch.features as any }),
         ...(patch.feats !== undefined && { feats: patch.feats as any }),
         ...(patch.inventory !== undefined && { inventory: patch.inventory as any }),
+        ...(patch.classLevels !== undefined && { classLevels: patch.classLevels as any }),
+        ...(patch.totalLevel !== undefined && { totalLevel: patch.totalLevel }),
       } as any,
     });
     return mapToCharacter(row);
