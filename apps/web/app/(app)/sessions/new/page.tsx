@@ -8,7 +8,7 @@ import { useCreateSession } from '@/lib/hooks/useSession';
 
 const schema = z.object({
   name: z.string().min(2).max(80),
-  maxPlayers: z.number().int().min(2).max(8),
+  maxPlayers: z.number().int().min(1).max(8),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -54,6 +54,7 @@ export default function CreateSessionPage() {
             {...register('maxPlayers', { valueAsNumber: true })}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
+            <option value={1}>1 (Solo)</option>
             {[2, 3, 4, 5, 6, 7, 8].map((n) => (
               <option key={n} value={n}>{n}</option>
             ))}

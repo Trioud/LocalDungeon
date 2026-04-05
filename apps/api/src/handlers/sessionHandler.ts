@@ -6,7 +6,7 @@ import type { CombatService } from '../services/CombatService.js';
 
 const CreateSessionSchema = z.object({
   name: z.string().min(2).max(80),
-  maxPlayers: z.number().int().min(2).max(8).default(6),
+  maxPlayers: z.number().int().min(1).max(8).default(6),
 });
 
 const JoinSessionSchema = z.object({
@@ -54,6 +54,17 @@ export async function sessionRoutes(app: FastifyInstance): Promise<void> {
       const { characterId } = JoinSessionSchema.parse(request.body);
       const svc = request.diScope.resolve<SessionService>('sessionService');
       const session = await svc.join(request.user.sub, characterId, id);
+      return reply.send(session);
+    }
+  );
+
+  app.post(
+    '/sessions/:id/start',
+    { preHandler: [app.authenticate] },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { id } = request.params as { id: string };
+      const svc = request.diScope.resolve<SessionService>('sessionService');
+      const session = await svc.start(request.user.sub, id);
       return reply.send(session);
     }
   );

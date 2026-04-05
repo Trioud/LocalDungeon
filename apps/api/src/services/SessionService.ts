@@ -72,6 +72,20 @@ export class SessionService {
     return session;
   }
 
+  async start(userId: string, sessionId: string): Promise<SessionInfo> {
+    const session = await this.sessionRepository.findById(sessionId);
+    if (!session) throw Object.assign(new Error('Session not found'), { statusCode: 404 });
+    if (session.createdById !== userId)
+      throw Object.assign(new Error('Only the session creator can start it'), { statusCode: 403 });
+    if (session.status !== 'lobby')
+      throw Object.assign(new Error('Session is not in lobby'), { statusCode: 400 });
+    if (session.players.length === 0)
+      throw Object.assign(new Error('At least one player must join before starting'), { statusCode: 400 });
+    await this.sessionRepository.updateSession(sessionId, { status: 'active' });
+    const updated = await this.sessionRepository.findById(sessionId);
+    return updated!;
+  }
+
   async listByUser(userId: string): Promise<SessionSummary[]> {
     return this.sessionRepository.findByUserId(userId);
   }

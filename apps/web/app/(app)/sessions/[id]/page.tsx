@@ -1,7 +1,7 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useSessionInfo, useLeaveSession } from '@/lib/hooks/useSession';
+import { useSessionInfo, useLeaveSession, useStartSession } from '@/lib/hooks/useSession';
 import { useSessionSocket } from '@/lib/hooks/useSessionSocket';
 import { useDiceRoller } from '@/lib/hooks/useDiceRoller';
 import { useVoice } from '@/lib/hooks/useVoice';
@@ -62,6 +62,7 @@ export default function SessionRoomPage() {
   const { connectedUserIds } = useSessionSocket(id);
   const { rolls, roll } = useDiceRoller(id);
   const leaveSession = useLeaveSession();
+  const startSession = useStartSession();
   const user = useAuthStore((s) => s.user);
   const [copied, setCopied] = useState(false);
 
@@ -145,20 +146,27 @@ export default function SessionRoomPage() {
           {session.status === 'lobby' ? (
             <div className="bg-white rounded-xl shadow border border-gray-200 p-8 text-center space-y-4">
               <p className="text-4xl">⏳</p>
-              <h2 className="text-xl font-semibold text-gray-700">Waiting for players...</h2>
-              <p className="text-sm text-gray-500">Share the invite code to bring your party together.</p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+              <h2 className="text-xl font-semibold text-gray-700">
+                {session.players.length === 0
+                  ? 'Join with a character to start'
+                  : session.players.length === 1
+                  ? 'Ready to adventure!'
+                  : 'Waiting for players...'}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {session.players.length > 0
+                  ? `${session.players.length} / ${session.maxPlayers} player${session.players.length > 1 ? 's' : ''} joined`
+                  : 'Share the invite code to bring your party together.'}
+              </p>
+              {session.createdById === user?.id && (
                 <button
-                  disabled
-                  title="Coming in Phase 11"
-                  className="py-2 px-6 bg-gray-200 text-gray-500 rounded-lg font-medium cursor-not-allowed"
+                  onClick={() => startSession.mutate(id)}
+                  disabled={session.players.length === 0 || startSession.isPending}
+                  className="py-2 px-8 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
-                  Start Combat (Phase 11)
+                  {startSession.isPending ? 'Starting...' : '▶ Start Session'}
                 </button>
-                <button className="py-2 px-6 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
-                  Ready
-                </button>
-              </div>
+              )}
             </div>
           ) : (
             <PhaseContent phase={session.phase} sessionId={id} />

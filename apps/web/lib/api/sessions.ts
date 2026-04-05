@@ -63,3 +63,9 @@ export async function joinSession(id: string, characterId: string): Promise<Sess
 export async function leaveSession(id: string): Promise<void> {
   await apiClient.delete(`/sessions/${id}/leave`);
 }
+
+
+export async function startSession(id: string): Promise<SessionInfo> {
+  const { data } = await apiClient.post<SessionInfo>(`/sessions/${id}/start`);
+  return data;
+}

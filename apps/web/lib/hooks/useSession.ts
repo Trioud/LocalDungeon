@@ -1,6 +1,6 @@
 'use client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { createSession, listSessions, getSession, joinSession, leaveSession } from '@/lib/api/sessions';
+import { createSession, listSessions, getSession, joinSession, leaveSession, startSession } from '@/lib/api/sessions';
 
 export function useSessionList() {
   return useQuery({ queryKey: ['sessions'], queryFn: listSessions });
@@ -37,5 +37,13 @@ export function useLeaveSession() {
   return useMutation({
     mutationFn: leaveSession,
     onSuccess: () => qc.invalidateQueries({ queryKey: ['sessions'] }),
+  });
+}
+
+export function useStartSession() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: startSession,
+    onSuccess: (_, id) => qc.invalidateQueries({ queryKey: ['session', id] }),
   });
 }
