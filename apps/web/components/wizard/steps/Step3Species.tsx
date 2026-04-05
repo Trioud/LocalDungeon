@@ -6,7 +6,7 @@ import { useWizard } from '@/lib/hooks/useWizard';
 interface SpeciesData {
   name: string;
   speed: number;
-  size: string;
+  size: string[];
   traits: Array<{ name: string; description: string }>;
   suboptions?: { label: string; choices: string[] };
 }
@@ -55,7 +55,7 @@ export default function Step3Species() {
               <h3 className="font-bold text-white mb-2">{sp.name}</h3>
               <div className="flex gap-3 mb-2 text-xs">
                 <span className="text-gray-400">Speed: <span className="text-white">{sp.speed} ft</span></span>
-                <span className="text-gray-400">Size: <span className="text-white">{sp.size}</span></span>
+                <span className="text-gray-400">Size: <span className="text-white">{sp.size.join(' / ')}</span></span>
               </div>
               <ul className="text-xs text-gray-400 space-y-1">
                 {(sp.traits ?? []).slice(0, 3).map((t) => (
