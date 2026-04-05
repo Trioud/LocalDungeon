@@ -30,7 +30,7 @@ export default function Step6Spells() {
     isSpellcaster ? { class: className, level: 0 } : undefined
   );
   const { data: spellsData, isLoading: spellsLoading } = useSpells(
-    isSpellcaster ? { class: className, minLevel: 1 } : undefined
+    isSpellcaster ? { class: className } : undefined
   );
 
   const [expandedSpell, setExpandedSpell] = useState<string | null>(null);
@@ -145,7 +145,7 @@ export default function Step6Spells() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {(spellsData ?? []).map((spell: SpellData) => renderSpellCard(
+            {(spellsData ?? []).filter((spell: SpellData) => spell.level >= 1).map((spell: SpellData) => renderSpellCard(
               spell,
               selectedSpells.includes(spell.name),
               selectedSpells.length >= knownSpellCount && !selectedSpells.includes(spell.name),
