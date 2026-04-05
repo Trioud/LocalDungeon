@@ -12,6 +12,7 @@ import { gameDataRoutes } from './handlers/gameDataHandler.js';
 import { characterRoutes } from './handlers/characterHandler.js';
 import { sessionRoutes } from './handlers/sessionHandler.js';
 import { sessionLogRoutes } from './handlers/sessionLogHandler.js';
+import { aiDmRoutes } from './handlers/aiDmHandler.js';
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -57,6 +58,7 @@ export async function buildApp(env: Env) {
   await app.register(characterRoutes);
   await app.register(sessionRoutes);
   await app.register(sessionLogRoutes);
+  await app.register(aiDmRoutes);
 
   app.get('/health', async (_request, reply) => {
     const redis = container.cradle.redis;

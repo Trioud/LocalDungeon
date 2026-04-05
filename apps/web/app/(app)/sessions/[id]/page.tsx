@@ -9,6 +9,7 @@ import { useCombat } from '@/lib/hooks/useCombat';
 import { useVoice } from '@/lib/hooks/useVoice';
 import { useAuthStore } from '@/lib/stores/authStore';
 import PlayerList from '@/components/session/PlayerList';
+import AIDMPanel from '@/components/session/AIDMPanel';
 import DiceRoller from '@/components/dice/DiceRoller';
 import GameLog from '@/components/gamelog/GameLog';
 import CombatTracker from '@/components/combat/CombatTracker';
@@ -43,6 +44,8 @@ function StartCombatButton({ sessionId }: { sessionId: string }) {
 }
 
 function PhaseContent({ phase, sessionId, onScrollToDice }: { phase: string; sessionId: string; onScrollToDice: () => void }) {
+  const [tab, setTab] = useState<'guide' | 'ai-dm'>('ai-dm');
+
   if (phase === 'combat') {
     return <CombatTracker sessionId={sessionId} />;
   }
@@ -58,40 +61,65 @@ function PhaseContent({ phase, sessionId, onScrollToDice }: { phase: string; ses
     );
   }
   return (
-    <div className="bg-white rounded-xl shadow border border-gray-200 p-6 space-y-5">
-      <div>
-        <h2 className="text-lg font-bold text-gray-800 mb-1">🧭 Exploration — What can you do?</h2>
-        <p className="text-sm text-gray-500">Use the tools below to play. Here's a quick guide:</p>
+    <div className="flex flex-col gap-0 rounded-xl overflow-hidden border border-gray-200 shadow bg-white">
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 bg-gray-50">
+        <button
+          onClick={() => setTab('ai-dm')}
+          className={`px-4 py-2.5 text-sm font-medium transition-colors ${tab === 'ai-dm' ? 'border-b-2 border-amber-500 text-amber-700 bg-white' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          🤖 AI Dungeon Master
+        </button>
+        <button
+          onClick={() => setTab('guide')}
+          className={`px-4 py-2.5 text-sm font-medium transition-colors ${tab === 'guide' ? 'border-b-2 border-indigo-500 text-indigo-700 bg-white' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          🧭 Quick Guide
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="font-semibold text-yellow-800 mb-1">🎲 Roll Dice</p>
-          <p className="text-xs text-yellow-700 mb-2">Click any die button in the <strong>Dice Roller</strong> panel below to roll. Results are broadcast to all players in the session log.</p>
-          <button
-            onClick={onScrollToDice}
-            className="text-xs bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-medium px-3 py-1 rounded transition-colors"
-          >
-            Jump to Dice Roller ↓
-          </button>
+      {/* Tab content */}
+      {tab === 'ai-dm' ? (
+        <div className="h-[480px]">
+          <AIDMPanel sessionId={sessionId} />
         </div>
+      ) : (
+        <div className="p-6 space-y-5">
+          <div>
+            <h2 className="text-lg font-bold text-gray-800 mb-1">🧭 Exploration — What can you do?</h2>
+            <p className="text-sm text-gray-500">Use the tools below to play. Here's a quick guide:</p>
+          </div>
 
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="font-semibold text-red-800 mb-1">⚔️ Start Combat</p>
-          <p className="text-xs text-red-700 mb-2">Encountered enemies? Switch to Combat Tracker to manage initiative, HP, and turns.</p>
-          <StartCombatButton sessionId={sessionId} />
-        </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <p className="font-semibold text-yellow-800 mb-1">🎲 Roll Dice</p>
+              <p className="text-xs text-yellow-700 mb-2">Click any die button in the <strong>Dice Roller</strong> panel below to roll. Results are broadcast to all players in the session log.</p>
+              <button
+                onClick={onScrollToDice}
+                className="text-xs bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-medium px-3 py-1 rounded transition-colors"
+              >
+                Jump to Dice Roller ↓
+              </button>
+            </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="font-semibold text-blue-800 mb-1">💬 Chat & Narrate</p>
-          <p className="text-xs text-blue-700">Type in the <strong>Game Log</strong> below to send messages. Use the 🎤 Voice button to dictate.</p>
-        </div>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="font-semibold text-red-800 mb-1">⚔️ Start Combat</p>
+              <p className="text-xs text-red-700 mb-2">Encountered enemies? Switch to Combat Tracker to manage initiative, HP, and turns.</p>
+              <StartCombatButton sessionId={sessionId} />
+            </div>
 
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="font-semibold text-green-800 mb-1">👥 Players</p>
-          <p className="text-xs text-green-700">See who's connected in the sidebar. Share the <strong>invite code</strong> at the top to let others join.</p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="font-semibold text-blue-800 mb-1">💬 Chat & Narrate</p>
+              <p className="text-xs text-blue-700">Type in the <strong>Game Log</strong> below to send messages. Use the 🎤 Voice button to dictate.</p>
+            </div>
+
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <p className="font-semibold text-green-800 mb-1">👥 Players</p>
+              <p className="text-xs text-green-700">See who's connected in the sidebar. Share the <strong>invite code</strong> at the top to let others join.</p>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

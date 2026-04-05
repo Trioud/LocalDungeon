@@ -30,6 +30,7 @@ import { WeaponMasteryService } from './services/WeaponMasteryService.js';
 import { ConsensusService } from './services/ConsensusService.js';
 import { ReadyActionService } from './services/ReadyActionService.js';
 import { SessionLogExportService } from './services/SessionLogExportService.js';
+import { AIDMService } from './services/AIDMService.js';
 import type { Env } from './env.js';
 
 export function buildContainer(env: Env) {
@@ -90,6 +91,7 @@ export function buildContainer(env: Env) {
     sessionLogExportService: asClass(SessionLogExportService).scoped(),
     sttProvider: asValue(sttProvider),
     sttService: asClass(STTService).scoped(),
+    aiDmService: asClass(AIDMService).singleton(),
   });
 
   return container;

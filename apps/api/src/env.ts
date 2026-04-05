@@ -17,6 +17,8 @@ export const envSchema = z.object({
   S3_PUBLIC_BASE_URL: z.string().optional(),
   STT_PROVIDER: z.enum(['mock', 'deepgram']).default('mock'),
   DEEPGRAM_API_KEY: z.string().optional(),
+  OLLAMA_URL: z.string().url().default('http://localhost:11434'),
+  OLLAMA_MODEL: z.string().default('mistral'),
 });
 
 export type Env = z.infer<typeof envSchema>;

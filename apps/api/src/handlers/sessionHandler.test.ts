@@ -14,6 +14,8 @@ const testEnv: Env = {
   CORS_ORIGIN: 'http://localhost:3000',
   STORAGE_PROVIDER: 'memory',
   STT_PROVIDER: 'mock',
+  OLLAMA_URL: 'http://localhost:11434',
+  OLLAMA_MODEL: 'mistral',
 };
 
 const validToken = signAccessToken(
