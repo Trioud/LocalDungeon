@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useRouter } from 'next/navigation';
@@ -77,7 +78,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-gray-900 text-white">
         <nav className="bg-gray-800 border-b border-gray-700 px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <span className="text-yellow-400 font-bold text-xl">⚔️ LocalDungeon</span>
+            <Link href="/dashboard" className="text-yellow-400 font-bold text-xl hover:text-yellow-300 transition-colors">⚔️ LocalDungeon</Link>
             <div className="flex items-center gap-4">
               {user && (
                 <span className="text-gray-300 text-sm">

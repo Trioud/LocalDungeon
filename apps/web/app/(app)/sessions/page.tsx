@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSessionList, useJoinSession } from '@/lib/hooks/useSession';
 import { useCharacterList } from '@/lib/hooks/useCharacter';
 import type { SessionSummary } from '@/lib/api/sessions';
@@ -55,12 +55,22 @@ export default function SessionsPage() {
   const { data: characters } = useCharacterList();
   const joinSession = useJoinSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [joiningSession, setJoiningSession] = useState<SessionSummary | null>(null);
+  // Pre-select character coming from "Bring to Session" on dashboard
+  const [preselectedCharId] = useState<string | null>(searchParams.get('characterId'));
 
   function handleJoin(session: SessionSummary) {
     setJoiningSession(session);
   }
+
+  // If a characterId was passed and there's exactly one open session, auto-open the modal
+  useEffect(() => {
+    if (preselectedCharId && sessions && sessions.length === 1 && sessions[0].status === 'lobby') {
+      setJoiningSession(sessions[0]);
+    }
+  }, [preselectedCharId, sessions]);
 
   async function handleSelectCharacter(characterId: string) {
     if (!joiningSession) return;
@@ -116,7 +126,11 @@ export default function SessionsPage() {
                     key={character.id}
                     onClick={() => handleSelectCharacter(character.id)}
                     disabled={joinSession.isPending}
-                    className="w-full text-left p-3 rounded-lg border border-gray-200 hover:border-indigo-500 hover:bg-indigo-50 transition-colors"
+                    className={`w-full text-left p-3 rounded-lg border transition-colors
+                      ${character.id === preselectedCharId
+                        ? 'border-indigo-500 bg-indigo-50 ring-1 ring-indigo-400'
+                        : 'border-gray-200 hover:border-indigo-500 hover:bg-indigo-50'}
+                    `}
                   >
                     <p className="font-medium">{character.name}</p>
                     <p className="text-xs text-gray-500">{character.className} · Level {character.level}</p>

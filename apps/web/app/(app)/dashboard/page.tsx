@@ -45,9 +45,6 @@ export default function DashboardPage() {
   const [deleteTarget, setDeleteTarget] = useState<Character | null>(null);
   const router = useRouter();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  void router;
-
   return (
     <div>
       {deleteTarget && (
@@ -95,9 +92,8 @@ export default function DashboardPage() {
                 <HPBar current={char.currentHP ?? char.maxHP ?? 0} max={char.maxHP ?? 0} />
                 <div className="flex gap-2 mt-1">
                   <button
-                    title="Coming in a future update"
-                    disabled
-                    className="flex-1 text-xs py-1.5 bg-gray-700 text-gray-500 rounded cursor-not-allowed border border-gray-600"
+                    onClick={() => router.push(`/sessions?characterId=${char.id}`)}
+                    className="flex-1 text-xs py-1.5 bg-indigo-700 hover:bg-indigo-600 text-white rounded border border-indigo-600 transition-colors"
                   >
                     🎲 Bring to Session
                   </button>
