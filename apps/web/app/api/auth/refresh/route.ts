@@ -9,10 +9,8 @@ export async function POST(request: NextRequest) {
 
   const apiRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'}/auth/refresh`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${refreshToken}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
   });
 
   const data = await apiRes.json();

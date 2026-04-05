@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useRouter } from 'next/navigation';
@@ -16,39 +16,40 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   );
   const { user, setAuth, clearAuth } = useAuthStore();
   const router = useRouter();
-
-  // Start restoring only if we have no user in memory yet.
-  // useRef guard prevents React 18 StrictMode from double-firing the effect
-  // and sending two concurrent refresh requests.
   const [restoring, setRestoring] = useState(!user);
-  const didFetch = useRef(false);
 
   useEffect(() => {
+    // User already in memory (e.g. just logged in via the login form) — nothing to restore.
     if (user) {
       setRestoring(false);
       return;
     }
-    // Guard: only one fetch per mount (StrictMode fires effects twice in dev)
-    if (didFetch.current) return;
-    didFetch.current = true;
 
-    fetch('/api/auth/refresh', { method: 'POST' })
+    // Use AbortController so React 18 StrictMode's cleanup (unmount → remount cycle)
+    // cancels the first fetch. Only the second, committed mount's fetch actually runs.
+    const controller = new AbortController();
+
+    fetch('/api/auth/refresh', { method: 'POST', signal: controller.signal })
       .then(async (res) => {
         if (res.ok) {
           const data = await res.json();
           setAuth(data.user, data.accessToken);
         } else {
-          // Cookie already cleared by the route handler — just redirect.
-          // Middleware will allow /login through because the cookie is gone.
+          // Cookie was cleared by the route handler — redirect without a loop.
           clearAuth();
           router.replace('/login');
         }
       })
-      .catch(() => {
-        clearAuth();
-        router.replace('/login');
+      .catch((err) => {
+        // AbortError = StrictMode cleanup cancelled the fetch — ignore silently.
+        if (err.name !== 'AbortError') {
+          clearAuth();
+          router.replace('/login');
+        }
       })
       .finally(() => setRestoring(false));
+
+    return () => controller.abort();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
